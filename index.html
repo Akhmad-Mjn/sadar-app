@@ -44,6 +44,9 @@
             color: var(--text-main); 
             line-height: 1.4;
             -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .navbar { 
@@ -66,9 +69,11 @@
             box-sizing: border-box;
         }
 
-        .brand { display: flex; align-items: center; gap: 8px; padding: 4px 0 8px 0;}
-        .brand h1 { margin: 0; color: var(--primary); font-size: 20px; font-weight: 800; letter-spacing: 0.5px;}
-        .brand span { background: var(--secondary); color: white; padding: 2px 6px; border-radius: 12px; font-size: 10px; font-weight: bold;}
+        .brand-container { display: flex; flex-direction: column; align-items: center; padding: 4px 0 8px 0; text-align: center; }
+        .brand-main { display: flex; align-items: center; gap: 8px; }
+        .brand-main h1 { margin: 0; color: var(--primary); font-size: 22px; font-weight: 800; letter-spacing: 1px;}
+        .brand-main span { background: var(--secondary); color: white; padding: 2px 6px; border-radius: 12px; font-size: 10px; font-weight: bold;}
+        .brand-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin-top: 2px; text-transform: uppercase; }
 
         .tabs { display: flex; width: 100%; gap: 6px; background: #e5e7eb; padding: 3px; border-radius: var(--radius-md); }
         .tab { 
@@ -91,6 +96,8 @@
             margin: 15px auto; 
             padding: 0 12px; 
             box-sizing: border-box;
+            flex: 1;
+            width: 100%;
         }
 
         .section { display: none; animation: fadeIn 0.3s ease; }
@@ -202,8 +209,18 @@
         
         .active-project-alert { background: #e0e7ff; color: #3730a3; padding: 10px 14px; border-radius: var(--radius-md); margin-bottom: 16px; font-weight: 600; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 8px;}
         
-        /* Banner Install PWA yang selalu siap siaga */
         #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 16px; align-items: center; justify-content: space-between; font-size: 13px; box-shadow: var(--shadow-md); }
+
+        /* Footer Styling */
+        .app-footer {
+            text-align: center;
+            padding: 20px 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            background: var(--card-bg);
+            margin-top: 40px;
+        }
 
         .grid-builder { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
         @media(min-width: 480px) {
@@ -217,8 +234,11 @@
 
 <div class="navbar">
     <div class="nav-container">
-        <div class="brand">
-            <h1>SADAR</h1><span>PWA v7.2</span>
+        <div class="brand-container">
+            <div class="brand-main">
+                <h1>SADAR</h1><span>PWA v7.4</span>
+            </div>
+            <div class="brand-sub">Sistem Aplikasi Data Responden</div>
         </div>
         <div class="tabs">
             <div class="tab locked active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</div>
@@ -328,10 +348,14 @@
     </div>
 </div>
 
+<!-- FOOTER INSTANSI -->
+<footer class="app-footer">
+    Copyright &copy; 2026 Bidang Pelayanan dan SDK Dinkes Kab. Majene
+</footer>
+
 <script>
     // --- INISIALISASI PWA YANG STABIL ---
     (() => {
-        // 1. Generate Manifest
         const manifest = {
             "name": "SADAR Pro Enterprise",
             "short_name": "SADAR",
@@ -348,7 +372,6 @@
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
 
-        // 2. Register Service Worker Standar
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
@@ -366,7 +389,6 @@
         }
     })();
 
-    // Tangkap Event Prompt Install
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
@@ -383,7 +405,7 @@
             }
             deferredPrompt = null;
         } else {
-            alert("Tips: Jika tombol otomatis tidak merespons, ketuk menu titik tiga (⋮) di pojok kanan atas browser Google Chrome Anda, lalu pilih 'Tambahkan ke Layar Utama' (Add to Home screen).");
+            alert("Tips: Ketuk menu titik tiga (⋮) di pojok kanan atas browser Google Chrome Anda, lalu pilih 'Tambahkan ke Layar Utama'.");
         }
     });
 
