@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SADAR Pro - Enterprise Survey System</title>
+    
+    <!-- PWA META & MANIFEST DINAMIS -->
+    <meta name="theme-color" content="#4338ca">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SADAR Pro">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1533/1533913.png">
+    <link rel="manifest" id="dynamicManifest">
+
+    <style>
+        /* Variabel Tema Premium SaaS */
+        :root {
+            --primary: #4338ca;      
+            --primary-hover: #3730a3;
+            --secondary: #0ea5e9;    
+            --success: #10b981;      
+            --success-hover: #059669;
+            --danger: #ef4444;       
+            --warning: #f59e0b;      
+            --bg-color: #f3f4f6;     
+            --card-bg: #ffffff;
+            --text-main: #1f2937;    
+            --text-muted: #6b7280;   
+            --border: #e5e7eb;       
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+        }
+
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-main); line-height: 1.5; }
+
+        .navbar { background-color: var(--card-bg); box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; display: flex; justify-content: center; }
+        .nav-container { width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .brand { display: flex; align-items: center; gap: 10px; padding: 15px 0;}
+        .brand h1 { margin: 0; color: var(--primary); font-size: 24px; font-weight: 800; letter-spacing: 1px;}
+        .brand span { background: var(--secondary); color: white; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; letter-spacing: 0.5px;}
+
+        .tabs { display: flex; gap: 10px; }
+        .tab { padding: 15px 20px; cursor: pointer; font-weight: 600; color: var(--text-muted); border-bottom: 3px solid transparent; transition: all 0.3s ease; font-size: 14px; }
+        .tab:hover { color: var(--primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab.locked::before { content: '🔒 '; font-size: 12px;}
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .section { display: none; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .section.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h2, h3 { color: var(--text-main); margin-top: 0; }
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; display: block; }
+        
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
+        input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); box-sizing: border-box; font-family: inherit; font-size: 15px; background-color: #f9fafb; transition: all 0.2s ease; accent-color: var(--primary); }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1); }
+
+        button { border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        button:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; padding: 12px 20px; box-shadow: var(--shadow-sm); }
+        .btn-primary:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); }
+        .btn-success { background: var(--success); color: white; padding: 12px 20px; box-shadow: var(--shadow-sm); }
+        .btn-success:hover { background: var(--success-hover); box-shadow: var(--shadow-md); }
+        .btn-warning { background: var(--warning); color: white; padding: 10px 15px; }
+        .btn-danger { background: var(--danger); color: white; padding: 10px 15px;}
+        .btn-dark { background: #374151; color: white; padding: 12px 20px;}
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); padding: 10px 15px; }
+        .btn-outline:hover { background: var(--bg-color); }
+        .btn-lg { padding: 16px 24px; font-size: 16px; width: 100%; }
+
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;}
+        .dashboard-actions { display: flex; gap: 10px; flex-wrap: wrap;}
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .project-card { background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: var(--radius-lg); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .project-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--primary); }
+        .project-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .project-info h3 { font-size: 18px; margin-bottom: 8px; }
+        .project-meta { display: flex; gap: 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+        .project-actions { display: flex; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px; flex-wrap: wrap; }
+        .project-actions button { flex: 1; padding: 8px; font-size: 13px; min-width: 80px; }
+
+        .build-card { background: var(--card-bg); padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); position: relative; }
+        .build-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+        .q-id-badge { background: var(--bg-color); color: var(--text-muted); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+        
+        .logic-panel { background: #f8fafc; padding: 16px; border-radius: var(--radius-md); border-left: 4px solid var(--secondary); margin: 15px 0; }
+        .req-toggle { display: inline-flex; align-items: center; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-main); }
+        .req-toggle input { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--primary); }
+
+        .survey-header { text-align: center; margin-bottom: 40px; }
+        .survey-header h2 { font-size: 28px; color: var(--primary); margin-bottom: 10px; }
+        
+        .q-card { background: var(--card-bg); padding: 30px; margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); transition: all 0.3s ease; }
+        .q-card:focus-within { box-shadow: var(--shadow-lg); border-color: #c7d2fe; transform: scale(1.01); }
+        .q-title { font-weight: 600; margin-bottom: 20px; color: var(--text-main); font-size: 18px; line-height: 1.5; }
+        .req-star { color: var(--danger); margin-left: 4px; }
+        
+        .options-list { display: flex; flex-direction: column; gap: 12px; }
+        .options-list label { display: flex; align-items: center; cursor: pointer; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border); background: #f9fafb; transition: 0.2s; font-size: 15px; font-weight: 500; }
+        .options-list label:hover { background: var(--card-bg); border-color: var(--primary); }
+        .options-list input { margin-right: 15px; width: 20px; height: 20px; accent-color: var(--primary); }
+
+        input[readonly] { background-color: var(--bg-color); color: var(--text-muted); cursor: not-allowed; border-style: dashed; }
+        .btn-gps { background: var(--card-bg); border: 2px solid var(--secondary); color: var(--secondary); font-weight: bold; padding: 12px; width: 100%; border-radius: var(--radius-md); transition: 0.2s; }
+        .btn-gps:hover { background: var(--secondary); color: white; }
+        .active-project-alert { background: #e0e7ff; color: #3730a3; padding: 12px 20px; border-radius: var(--radius-md); margin-bottom: 25px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;}
+        
+        /* Banner Install PWA */
+        #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px 20px; border-radius: var(--radius-lg); margin-bottom: 20px; align-items: center; justify-content: space-between; box-shadow: var(--shadow-md); }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; padding: 10px; }
+            .tabs { width: 100%; overflow-x: auto; padding-bottom: 5px; }
+            .tab { white-space: nowrap; padding: 10px 15px; }
+            .dashboard-header { flex-direction: column; align-items: flex-start;}
+            .projects-grid { grid-template-columns: 1fr; }
+            .q-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<input type="file" id="fileImport" accept=".sadar,.json" style="display:none;" onchange="prosesImportFile(event)">
+
+<div class="navbar">
+    <div class="nav-container">
+        <div class="brand">
+            <h1>SADAR</h1><span>PWA v7.0</span>
+        </div>
+        <div class="tabs">
+            <div class="tab locked active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</div>
+            <div class="tab locked" id="tab-builder" onclick="switchTab('builder')">Desain Proyek</div>
+            <div class="tab" id="tab-input" onclick="switchTab('input')">Mode Lapangan</div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- BANNER INSTALASI PWA -->
+    <div id="pwaInstallBanner">
+        <div>
+            <strong>📱 Pasang SADAR ke Layar Utama HP</strong>
+            <p style="margin: 3px 0 0 0; font-size: 13px; opacity: 0.9;">Nikmati mode offline penuh tanpa perlu buka browser berulang kali.</p>
+        </div>
+        <button type="button" class="btn-success" id="btnInstallPWA" style="background: white; color: var(--primary); padding: 8px 16px;">Install Aplikasi</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="section active">
+        <div class="dashboard-header">
+            <div>
+                <h2>Workspace Admin</h2>
+                <span class="subtitle">Sistem Survei Mandiri Offline-Ready.</span>
+            </div>
+            <div class="dashboard-actions">
+                <button class="btn-outline" onclick="resetPin()">⚙️ Reset PIN</button>
+                <button class="btn-dark" onclick="klikImport()">📥 Import (.sadar)</button>
+                <button class="btn-primary" onclick="buatProyekBaru()">+ Buat Proyek Baru</button>
+            </div>
+        </div>
+        <div class="projects-grid" id="projectListContainer"></div>
+    </div>
+
+    <!-- MODE DESAIN -->
+    <div id="builder" class="section">
+        <div class="active-project-alert">
+            <span id="lblActiveProjectDesign">📁 Proyek Aktif: -</span>
+            <button class="btn-outline" style="background: white; border-color: #c7d2fe; color: var(--primary);" onclick="switchTab('input')">Pergi ke Lapangan ➔</button>
+        </div>
+        
+        <div style="background: var(--card-bg); padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-top: 4px solid var(--primary);">
+            <div class="input-group" style="margin: 0;">
+                <label>Judul Resmi Kuesioner:</label>
+                <input type="text" id="surveyTitle" placeholder="Misal: Survei Kepuasan Pelanggan 2026" style="font-size: 18px; font-weight: bold;">
+            </div>
+        </div>
+
+        <div id="questionsContainer"></div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button class="btn-outline btn-lg" onclick="addQuestionUI()">+ Tambah Pertanyaan</button>
+            <button class="btn-primary btn-lg" onclick="saveKuesionerSchema()">💾 Simpan & Terapkan</button>
+        </div>
+    </div>
+
+    <!-- MODE INPUT -->
+    <div id="input" class="section">
+        <div class="survey-header">
+            <h2 id="displayTitle">Sistem Siaga (Standby)</h2>
+            
+            <div id="emptyInputState" style="text-align:center; padding:40px; background:white; border-radius:12px; border:1px dashed var(--border); margin-top: 20px;">
+                <p style="color:var(--text-muted); margin-bottom: 20px;">Belum ada proyek aktif. Silakan muat file proyek (.sadar) dari Administrator.</p>
+                <button class="btn-dark btn-lg" style="width: auto;" onclick="klikImport()">📥 Load File Proyek (.sadar)</button>
+            </div>
+
+            <div id="activeInputState" style="display: none; justify-content: center; gap: 15px; margin-top: 15px; align-items: center; flex-wrap: wrap;">
+                <span class="subtitle" id="statusBar" style="margin:0;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
+                <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 13px;" onclick="bukaDaftarResponden()">🔍 Cari / Edit Data</button>
+                <button type="button" class="btn-dark" style="padding: 6px 12px; font-size: 13px;" onclick="exportProyekAktif()">📤 Backup & Kirim File (.sadar)</button>
+            </div>
+        </div>
+        
+        <!-- Modal Pencarian Data Edit -->
+        <div id="modalEdit" style="display: none; background: var(--card-bg); padding: 25px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-lg); margin-bottom: 24px; border-top: 4px solid var(--warning);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin:0; font-size: 18px; display: flex; align-items: center; gap: 8px;">🔍 Cari Data Untuk Dikoreksi</h3>
+                <button type="button" class="btn-outline" style="padding: 5px 10px; font-size:12px; border-color: var(--danger); color: var(--danger);" onclick="tutupDaftarResponden()">Tutup</button>
+            </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="number" id="inputCariEdit" placeholder="Ketik ID Responden (Misal: 5)" style="flex: 1; padding: 12px; background: white;" onkeypress="if(event.key === 'Enter') { cariDataEdit(); return false; }">
+                <button type="button" class="btn-primary" onclick="cariDataEdit()" style="padding: 12px 20px;">Cari Data</button>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px; font-weight:600; border-bottom: 1px solid var(--border); padding-bottom: 8px;">15 Data Terakhir (Klik untuk edit cepat):</p>
+            <div id="listEditContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+        
+        <form id="dataForm" onchange="evaluasiLogikaLompat()" oninput="evaluasiLogikaLompat()" style="display: none;">
+            <div class="q-card" id="core-id" style="border-left: 4px solid var(--success);">
+                <div class="q-title">ID Rekam Data (Sistem)</div>
+                <input type="number" id="id_responden" name="ID_Responden" readonly required>
+                <div id="editWarning" style="background: #fffbeb; color: #b45309; padding: 10px 15px; border-radius: 6px; border: 1px solid #fde68a; display:none; margin-top: 15px; font-weight: 600; font-size: 14px;">
+                    ⚠️ MODE KOREKSI AKTIF: Anda sedang mengubah data yang sudah tersimpan.
+                </div>
+            </div>
+
+            <div id="dynamicFormContainer"></div>
+
+            <button type="button" id="btnSubmitData" class="btn-success btn-lg" onclick="simpanData()" style="margin-top: 30px; border-radius: var(--radius-xl); width: 100%;">
+                Kirim & Simpan Data Baru 🚀
+            </button>
+            <button type="button" id="btnBatalEdit" class="btn-outline btn-lg" onclick="batalEdit()" style="display: none; margin-top: 15px; border-radius: var(--radius-xl); width: 100%; color: var(--danger); border-color: var(--danger);">
+                ❌ Batal Koreksi (Kembali Input Baru)
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- SETUP OTOMATIS PWA (MANIFEST & SERVICE WORKER) ---
+    (() => {
+        // 1. Generate Manifest secara Dinamis agar PWA mandiri dalam 1 file
+        const manifestData = {
+            "name": "SADAR Pro Enterprise",
+            "short_name": "SADAR",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#f3f4f6",
+            "theme_color": "#4338ca",
+            "icons": [
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+        document.getElementById('dynamicManifest').href = URL.createObjectURL(manifestBlob);
+
+        // 2. Register Service Worker untuk Offline Caching
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', e => self.skipWaiting());
+                self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+                self.addEventListener('fetch', e => {
+                    e.respondWith(
+                        caches.match(e.request).then(response => response || fetch(e.request).catch(() => caches.match('./')))
+                    );
+                });
+            `;
+            const swBlob = new Blob([swCode], {type: 'text/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob))
+                .catch(err => console.log('PWA SW Error:', err));
+        }
+    })();
+
+    // Logika Prompt Install PWA
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('pwaInstallBanner').style.display = 'flex';
+    });
+
+    document.getElementById('btnInstallPWA').addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            let { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                document.getElementById('pwaInstallBanner').style.display = 'none';
+            }
+            deferredPrompt = null;
+        } else {
+            alert("Aplikasi sudah terpasang atau browser Anda tidak mendukung instalasi otomatis.\n\nTips: Buka menu titik tiga Google Chrome, lalu pilih 'Tambahkan ke Layar Utama' (Add to Home Screen).");
+        }
+    });
+
+    // --- LOGIKA UTAMA APLIKASI SADAR ---
+    let appPin = localStorage.getItem('sadarPin4');
+    let isAdminUnlocked = false;
+    let projects = JSON.parse(localStorage.getItem('sadarProjectsV4')) || [];
+    let currentProjectId = null;
+    let activeProject = null;
+    let editIndex = null;
+
+    window.onload = function() {
+        if (!appPin) {
+            let setup = prompt("🚀 INISIALISASI SADAR PWA\n\nBuat PIN Keamanan (Angka):\nUntuk mengunci Dashboard dari jangkauan enumerator.");
+            if (setup && setup.trim() !== "") {
+                localStorage.setItem('sadarPin4', setup.trim());
+                appPin = setup.trim();
+                isAdminUnlocked = true; 
+            } else {
+                alert("Wajib membuat PIN untuk akses sistem.");
+                location.reload();
+                return;
+            }
+        }
+        renderDashboard();
+    }
+
+    function simpanKeLocalStorage() {
+        localStorage.setItem('sadarProjectsV4', JSON.stringify(projects));
+    }
+
+    function resetPin() {
+        if(confirm("Yakin ingin mereset PIN? Akses akan ditutup hingga PIN baru dibuat.")) {
+            localStorage.removeItem('sadarPin4');
+            location.reload();
+        }
+    }
+
+    function mintaAksesAdmin() {
+        if (isAdminUnlocked) return true;
+        let inputPin = prompt("🔒 AREA TERKUNCI\nMasukkan PIN Admin:");
+        if (inputPin === appPin) {
+            isAdminUnlocked = true;
+            return true;
+        } else {
+            if(inputPin !== null) alert("Akses Ditolak: PIN tidak valid.");
+            return false;
+        }
+    }
+
+    function switchTab(tabId) {
+        if(tabId === 'dashboard' || tabId === 'builder') {
+            if (!mintaAksesAdmin()) return;
+        }
+        if(tabId === 'builder' && !currentProjectId) {
+            alert("Buka atau buat proyek dari Dashboard dulu."); return; 
+        }
+
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        
+        document.getElementById('tab-' + tabId).classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+
+        if(tabId === 'builder' && currentProjectId) loadBuilderUI();
+        if(tabId === 'input') {
+            if(currentProjectId) {
+                document.getElementById('emptyInputState').style.display = 'none';
+                document.getElementById('activeInputState').style.display = 'flex';
+                document.getElementById('dataForm').style.display = 'block';
+                renderForm(); 
+                evaluasiLogikaLompat(); 
+            } else {
+                document.getElementById('emptyInputState').style.display = 'block';
+                document.getElementById('activeInputState').style.display = 'none';
+                document.getElementById('dataForm').style.display = 'none';
+                document.getElementById('displayTitle').innerText = "Sistem Siaga (Standby)";
+            }
+        }
+        window.scrollTo(0,0);
+    }
+
+    function klikImport() { document.getElementById('fileImport').click(); }
+
+    function prosesImportFile(event) {
+        let file = event.target.files[0];
+        if(!file) return;
+
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let imported = JSON.parse(e.target.result);
+                if(!imported.id || !imported.schema || !Array.isArray(imported.data)) throw new Error("Invalid");
+                
+                let existingIdx = projects.findIndex(p => p.id === imported.id);
+                if(existingIdx !== -1) {
+                    if(confirm(`Proyek "${imported.title}" sudah ada.\n\nKlik OK untuk MENIMPA/UPDATE data, atau Batal sebagai Salinan Baru.`)) {
+                        projects[existingIdx] = imported;
+                    } else {
+                        imported.id = 'PROJ_' + Date.now();
+                        imported.title = imported.title + " (Copy)";
+                        projects.push(imported);
+                    }
+                } else {
+                    projects.push(imported);
+                }
+                
+                simpanKeLocalStorage();
+                event.target.value = '';
+                alert("✅ Proyek berhasil di-load!");
+
+                currentProjectId = imported.id;
+                activeProject = projects.find(p => p.id === imported.id);
+                
+                if(isAdminUnlocked) { renderDashboard(); } 
+                else {
+                    document.getElementById('displayTitle').innerText = activeProject.title;
+                    switchTab('input');
+                }
+            } catch(err) {
+                alert("Gagal membaca file .sadar.");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function exportProyekSpesifik(id) {
+        let p = projects.find(x => x.id === id);
+        if(!p) return;
+        let blob = new Blob([JSON.stringify(p)], {type: "application/json"});
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        let date = new Date().toISOString().slice(0,10);
+        link.download = `SADAR_${p.title.replace(/\s+/g, '_')}_${date}.sadar`;
+        link.click();
+    }
+
+    function exportProyekAktif() {
+        if(!activeProject) return;
+        let blob = new Blob([JSON.stringify(activeProject)], {type: "application/json"});
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        let date = new Date().toISOString().slice(0,10);
+        link.download = `SADAR_Laporan_${activeProject.title.replace(/\s+/g, '_')}_${date}.sadar`;
+        link.click();
+        alert("File .sadar berhasil diunduh! Silakan kirimkan ke Koordinator.");
+    }
+
+    function renderDashboard() {
+        const container = document.getElementById('projectListContainer');
+        container.innerHTML = '';
+        
+        if(projects.length === 0) {
+            container.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:60px; color:var(--text-muted); background:white; border-radius:12px; border:1px dashed var(--border);"><h3>Ruang Kerja Kosong</h3><p>Buat proyek baru atau Import file .sadar.</p></div>';
+            return;
+        }
+
+        projects.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+        
+        projects.forEach(p => {
+            const dateStr = new Date(p.lastModified).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+            let html = `
+                <div class="project-card">
+                    <div class="project-info">
+                        <h3>${p.title}</h3>
+                        <div class="project-meta">
+                            <span>🕒 ${dateStr}</span>
+                            <span style="color:var(--primary); font-weight:bold;">👥 ${p.data.length} Data</span>
+                        </div>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn-outline" onclick="bukaProyek('${p.id}')">✏️ Buka</button>
+                        <button class="btn-dark" onclick="exportProyekSpesifik('${p.id}')">📤 .sadar</button>
+                        <button class="btn-success" onclick="unduhDataAdmin('${p.id}')">📊 CSV</button>
+                        <button class="btn-danger" style="flex: 0.3;" onclick="hapusProyek('${p.id}')">🗑️</button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += html;
+        });
+    }
+
+    function buatProyekBaru() {
+        let namaProyek = prompt("Nama Proyek / Kuesioner Baru:");
+        if(!namaProyek || namaProyek.trim() === "") return;
+        let newProject = { id: 'PROJ_' + Date.now(), title: namaProyek, lastModified: new Date().toISOString(), schema: [], data: [] };
+        projects.push(newProject);
+        simpanKeLocalStorage();
+        bukaProyek(newProject.id);
+    }
+
+    function bukaProyek(id) {
+        currentProjectId = id;
+        activeProject = projects.find(p => p.id === id);
+        document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`;
+        document.getElementById('displayTitle').innerText = activeProject.title;
+        switchTab('builder');
+    }
+
+    function hapusProyek(id) {
+        let pName = projects.find(p => p.id === id).title;
+        if(confirm(`Yakin MENGHAPUS PERMANEN "${pName}"?`)) {
+            projects = projects.filter(p => p.id !== id);
+            if(currentProjectId === id) { currentProjectId = null; activeProject = null; }
+            simpanKeLocalStorage();
+            renderDashboard();
+        }
+    }
+
+    function updateLabels() {
+        document.querySelectorAll('#questionsContainer .build-card').forEach((card, index) => {
+            card.querySelector('.q-id-badge').innerText = "KODE: Q" + (index + 1);
+        });
+    }
+
+    function loadBuilderUI() {
+        document.getElementById('surveyTitle').value = activeProject.title;
+        document.getElementById('questionsContainer').innerHTML = '';
+        if(activeProject.schema.length > 0) {
+            activeProject.schema.forEach(q => {
+                addQuestionUI();
+                const cards = document.querySelectorAll('#questionsContainer .build-card');
+                const lastCard = cards[cards.length - 1];
+                lastCard.querySelector('.q-var').value = q.varName;
+                lastCard.querySelector('.q-text').value = q.text;
+                lastCard.querySelector('.q-type').value = q.type;
+                lastCard.querySelector('.q-req-box').checked = q.required;
+                toggleOptions(lastCard.querySelector('.q-type'));
+                if(q.options.length > 0) lastCard.querySelector('.q-opt-val').value = q.options.join(', ');
+                if(q.logic && q.logic.parentId) {
+                    lastCard.querySelector('.logic-parent').value = q.logic.parentId;
+                    lastCard.querySelector('.logic-val').value = q.logic.requiredValue;
+                }
+            });
+        }
+    }
+
+    function addQuestionUI() {
+        const div = document.createElement('div');
+        div.className = 'build-card';
+        div.innerHTML = `
+            <div class="build-header">
+                <span class="q-id-badge">KODE: Q?</span>
+                <label class="req-toggle"><input type="checkbox" class="q-req-box"> Wajib Diisi</label>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 20px;">
+                <div class="input-group" style="margin:0;">
+                    <label>Variabel Excel (Tanpa Spasi)</label>
+                    <input type="text" class="q-var" placeholder="Misal: usia" oninput="this.value = this.value.replace(/\\s+/g, '_').toLowerCase()">
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label>Teks Pertanyaan</label>
+                    <input type="text" class="q-text" placeholder="Tuliskan pertanyaan...">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Format Jawaban</label>
+                <select class="q-type" onchange="toggleOptions(this)">
+                    <option value="text">Teks Pendek</option>
+                    <option value="textarea">Teks Paragraf</option>
+                    <option value="number">Angka (Numerik)</option>
+                    <option value="radio">Pilihan Ganda (Pilih 1)</option>
+                    <option value="checkbox">Kotak Centang (Pilih >1)</option>
+                    <option value="dropdown">Dropdown List</option>
+                    <option value="date">Tanggal</option>
+                    <option value="gps">📍 Sensor GPS</option>
+                </select>
+            </div>
+            <div class="input-group q-options" style="display:none; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px dashed #fcd34d;">
+                <label>Opsi Pilihan (Pisahkan dengan KOMA)</label>
+                <input type="text" class="q-opt-val" placeholder="Opsi A, Opsi B" style="background: white;">
+            </div>
+            <div class="logic-panel">
+                <label style="font-size: 13px; font-weight:bold; margin-bottom: 8px; display:block;">⚡ Tampilkan HANYA JIKA:</label>
+                <div style="display: flex; gap: 15px;">
+                    <input type="text" class="logic-parent" placeholder="Kode Induk (Cth: Q1)" style="flex: 1; background:white;">
+                    <input type="text" class="logic-val" placeholder="Jawaban Target (Cth: Ya)" style="flex: 2; background:white;">
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 15px;">
+                <button class="btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="this.parentElement.parentElement.remove(); updateLabels();">Hapus Blok</button>
+            </div>
+        `;
+        document.getElementById('questionsContainer').appendChild(div);
+        updateLabels();
+    }
+
+    function toggleOptions(selectElem) {
+        const optionsDiv = selectElem.parentElement.nextElementSibling;
+        optionsDiv.style.display = ['radio', 'checkbox', 'dropdown'].includes(selectElem.value) ? 'block' : 'none';
+    }
+
+    function saveKuesionerSchema() {
+        let tempSchema = [];
+        let newTitle = document.getElementById('surveyTitle').value || "Proyek Tanpa Judul";
+        let isValid = true;
+        
+        document.querySelectorAll('#questionsContainer .build-card').forEach((card, index) => {
+            let qID = "Q" + (index + 1);
+            let qVar = card.querySelector('.q-var').value.trim() || qID;
+            let qText = card.querySelector('.q-text').value;
+            let qType = card.querySelector('.q-type').value;
+            let qReq = card.querySelector('.q-req-box').checked;
+            let qOpts = card.querySelector('.q-opt-val').value;
+            let lParent = card.querySelector('.logic-parent').value.trim().toUpperCase();
+            let lVal = card.querySelector('.logic-val').value.trim();
+            
+            if(qText.trim() === "") isValid = false;
+            let optionsArray = [];
+            if (['radio', 'checkbox', 'dropdown'].includes(qType)) {
+                optionsArray = qOpts.split(',').map(o => o.trim()).filter(o => o !== "");
+                if (optionsArray.length === 0) isValid = false;
+            }
+            tempSchema.push({ id: qID, varName: qVar, text: qText, type: qType, required: qReq, options: optionsArray, logic: { parentId: lParent, requiredValue: lVal } });
+        });
+
+        if (tempSchema.length === 0) return alert("Belum ada pertanyaan.");
+        if (!isValid) return alert("Pastikan teks pertanyaan & opsi terisi.");
+        if(activeProject.data.length > 0 && JSON.stringify(tempSchema.map(q=>q.id)) !== JSON.stringify(activeProject.schema.map(q=>q.id))) {
+            if(!confirm("⚠️ Data lama tidak kompatibel dengan struktur baru dan akan direset. Lanjutkan?")) return;
+            activeProject.data = [];
+        }
+
+        activeProject.schema = tempSchema; activeProject.title = newTitle; activeProject.lastModified = new Date().toISOString();
+        simpanKeLocalStorage();
+        alert("Desain berhasil dikunci & diterapkan ke Mode Lapangan!");
+        document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`;
+        document.getElementById('displayTitle').innerText = activeProject.title;
+    }
+
+    function renderForm() {
+        if(!activeProject || activeProject.schema.length === 0) return;
+        batalEdit();
+        const container = document.getElementById('dynamicFormContainer');
+        container.innerHTML = '';
+
+        activeProject.schema.forEach((q, index) => {
+            let reqMark = q.required ? '<span class="req-star">*</span>' : '';
+            let reqAttr = q.required ? 'required' : '';
+            let html = `<div class="q-card" id="card-${q.id}" data-parent="${q.logic.parentId}" data-reqval="${q.logic.requiredValue}">
+                <div class="q-title">${index + 1}. ${q.text} ${reqMark}</div>`;
+            
+            if (q.type === 'text') { html += `<input type="text" name="${q.id}" ${reqAttr} placeholder="Ketik jawaban...">`; } 
+            else if (q.type === 'textarea') { html += `<textarea name="${q.id}" rows="3" ${reqAttr} placeholder="Jelaskan detail..."></textarea>`; }
+            else if (q.type === 'number') { html += `<input type="number" name="${q.id}" ${reqAttr} placeholder="0">`; } 
+            else if (q.type === 'date') { html += `<input type="date" name="${q.id}" ${reqAttr}>`; }
+            else if (q.type === 'dropdown') {
+                html += `<select name="${q.id}" ${reqAttr}><option value="">Pilih Opsi</option>`;
+                q.options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; });
+                html += `</select>`;
+            }
+            else if (q.type === 'radio') {
+                html += `<div class="options-list">`;
+                q.options.forEach(opt => { html += `<label><input type="radio" name="${q.id}" value="${opt}" ${reqAttr}> <span>${opt}</span></label>`; });
+                html += `</div>`;
+            }
+            else if (q.type === 'checkbox') {
+                html += `<div class="options-list">`;
+                q.options.forEach(opt => { html += `<label><input type="checkbox" name="${q.id}" value="${opt}"> <span>${opt}</span></label>`; });
+                html += `</div>`;
+            }
+            else if (q.type === 'gps') {
+                html += `
+                    <button type="button" class="btn-gps" onclick="ambilLokasi('${q.id}')">📍 Ambil Koordinat GPS</button>
+                    <input type="text" id="gps-${q.id}" name="${q.id}" readonly placeholder="Belum direkam" ${reqAttr} style="margin-top:10px;">
+                `;
+            }
+            html += `</div>`;
+            container.innerHTML += html;
+        });
+    }
+
+    function ambilLokasi(qID) {
+        const inputField = document.getElementById(`gps-${qID}`);
+        inputField.value = "Mencari satelit...";
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    inputField.value = `${position.coords.latitude}, ${position.coords.longitude} (Acc: ${Math.round(position.coords.accuracy)}m)`;
+                    inputField.style.backgroundColor = "#ecfdf5"; inputField.style.borderColor = "var(--success)";
+                },
+                function(error) { inputField.value = ""; alert("Gagal mengambil GPS. Pastikan GPS HP aktif."); },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        } else { alert("GPS tidak didukung."); inputField.value = "Tidak Didukung"; }
+    }
+
+    function evaluasiLogikaLompat() {
+        if(!activeProject || activeProject.schema.length === 0) return;
+        const form = document.getElementById('dataForm');
+        const formData = new FormData(form);
+
+        document.querySelectorAll('.q-card').forEach(card => {
+            if(card.id === 'core-id') return;
+            let parentId = card.getAttribute('data-parent');
+            let reqValue = card.getAttribute('data-reqval');
+
+            if (parentId && reqValue) {
+                let actualValue = formData.getAll(parentId).join("; ");
+                if (actualValue.toLowerCase().includes(reqValue.toLowerCase())) {
+                    card.style.display = 'block';
+                    let qData = activeProject.schema.find(q => q.id === card.id.replace('card-',''));
+                    if(qData && qData.required) {
+                        card.querySelectorAll('input, select, textarea').forEach(inp => {
+                            if(inp.type !== 'checkbox') inp.required = true;
+                        });
+                    }
+                } else {
+                    card.style.display = 'none';
+                    card.querySelectorAll('input, select, textarea').forEach(inp => {
+                        inp.required = false;
+                        if(inp.type === 'radio' || inp.type === 'checkbox') inp.checked = false;
+                        else inp.value = "";
+                    });
+                }
+            }
+        });
+    }
+
+    function bukaDaftarResponden() {
+        if (!activeProject || activeProject.data.length === 0) { alert("Belum ada data."); return; }
+        document.getElementById('inputCariEdit').value = '';
+        renderListEdit();
+        document.getElementById('modalEdit').style.display = 'block';
+        document.getElementById('dataForm').style.display = 'none';
+    }
+
+    function renderListEdit() {
+        const container = document.getElementById('listEditContainer');
+        container.innerHTML = '';
+        let startIndex = Math.max(0, activeProject.data.length - 15);
+        for(let i = activeProject.data.length - 1; i >= startIndex; i--) {
+            let row = activeProject.data[i];
+            let btn = document.createElement('button');
+            btn.type = 'button'; btn.className = 'btn-outline'; btn.style.width = '100%';
+            btn.innerHTML = `ID: <strong>${row.ID_Responden}</strong>`;
+            btn.onclick = () => muatDataEdit(i);
+            container.appendChild(btn);
+        }
+    }
+
+    function cariDataEdit() {
+        let targetID = document.getElementById('inputCariEdit').value.trim();
+        if(targetID === "") return;
+        let foundIndex = activeProject.data.findIndex(row => row.ID_Responden.toString() === targetID);
+        if(foundIndex !== -1) { muatDataEdit(foundIndex); } 
+        else { alert(`Data dengan ID ${targetID} tidak ditemukan!`); }
+    }
+
+    function tutupDaftarResponden() {
+        document.getElementById('modalEdit').style.display = 'none';
+        document.getElementById('dataForm').style.display = 'block';
+    }
+
+    function muatDataEdit(idx) {
+        editIndex = idx;
+        let row = activeProject.data[idx];
+        let form = document.getElementById('dataForm');
+        form.reset(); 
+        document.getElementById('id_responden').value = row.ID_Responden;
+        
+        activeProject.schema.forEach(q => {
+            let val = row[q.id] || "";
+            if (q.type === 'radio') {
+                let radio = form.querySelector(`input[name="${q.id}"][value="${val}"]`);
+                if(radio) radio.checked = true;
+            } else if (q.type === 'checkbox') {
+                let vals = val.split('; ');
+                vals.forEach(v => {
+                    let cb = form.querySelector(`input[name="${q.id}"][value="${v}"]`);
+                    if(cb) cb.checked = true;
+                });
+            } else if (q.type === 'gps') {
+                let gpsField = document.getElementById(`gps-${q.id}`);
+                gpsField.value = val;
+                if(val !== "") { gpsField.style.backgroundColor = "#ecfdf5"; gpsField.style.borderColor = "var(--success)"; }
+            } else {
+                let inp = form.querySelector(`[name="${q.id}"]`);
+                if(inp) inp.value = val;
+            }
+        });
+
+        document.getElementById('btnSubmitData').innerHTML = "💾 Update Data Responden";
+        document.getElementById('btnSubmitData').className = "btn-warning btn-lg";
+        document.getElementById('btnBatalEdit').style.display = 'block';
+        document.getElementById('editWarning').style.display = 'block';
+        document.getElementById('core-id').style.borderLeftColor = "var(--warning)";
+
+        tutupDaftarResponden();
+        evaluasiLogikaLompat();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function batalEdit() {
+        editIndex = null; 
+        let form = document.getElementById('dataForm');
+        form.reset();
+        form.querySelectorAll('input[id^="gps-"]').forEach(inp => {
+            inp.style.backgroundColor = ""; inp.style.borderColor = "";
+        });
+
+        if(activeProject) {
+            document.getElementById('id_responden').value = activeProject.data.length + 1;
+            document.getElementById('countData').innerText = activeProject.data.length;
+        }
+        
+        document.getElementById('btnSubmitData').innerHTML = "Kirim & Simpan Data Baru 🚀";
+        document.getElementById('btnSubmitData').className = "btn-success btn-lg";
+        document.getElementById('btnBatalEdit').style.display = 'none';
+        document.getElementById('editWarning').style.display = 'none';
+        document.getElementById('core-id').style.borderLeftColor = "var(--success)";
+        evaluasiLogikaLompat();
+    }
+
+    function simpanData() {
+        const form = document.getElementById('dataForm');
+        let isCheckboxValid = true;
+        activeProject.schema.forEach(q => {
+            if(q.type === 'checkbox' && q.required) {
+                const card = document.getElementById('card-' + q.id);
+                if(card.style.display !== 'none') {
+                    const checkboxes = form.querySelectorAll(`input[name="${q.id}"]:checked`);
+                    if(checkboxes.length === 0) { alert(`Validasi Gagal: Pertanyaan ${q.id.replace('Q','')} wajib diisi.`); isCheckboxValid = false; }
+                }
+            }
+        });
+        if(!isCheckboxValid) return;
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
+        evaluasiLogikaLompat(); 
+        const formData = new FormData(form);
+        const data = {};
+        data["ID_Responden"] = document.getElementById('id_responden').value;
+        
+        activeProject.schema.forEach(q => {
+            const card = document.getElementById('card-' + q.id);
+            if(card.style.display !== 'none') { data[q.id] = formData.getAll(q.id).join("; "); } 
+            else { data[q.id] = ""; }
+        });
+
+        if (editIndex !== null) {
+            activeProject.data[editIndex] = data;
+            alert(`✅ Data ID: ${data["ID_Responden"]} berhasil diperbarui!`);
+        } else {
+            activeProject.data.push(data);
+            alert("✅ Data responden baru tersimpan offline!");
+        }
+
+        activeProject.lastModified = new Date().toISOString();
+        simpanKeLocalStorage();
+        batalEdit(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function unduhDataAdmin(id) {
+        let proj = projects.find(p => p.id === id);
+        if(!proj || proj.data.length === 0) return alert("Database kosong.");
+        let headers = ["ID_Responden"];
+        proj.schema.forEach(q => headers.push(q.varName));
+        let csv = headers.join(",") + "\n";
+        
+        proj.data.forEach(row => {
+            let rowArray = [`"${(row["ID_Responden"] || "").toString().replace(/"/g, '""')}"`];
+            proj.schema.forEach(q => {
+                let val = row[q.id] || "";
+                rowArray.push(`"${val.toString().replace(/"/g, '""')}"`);
+            });
+            csv += rowArray.join(",") + "\n";
+        });
+
+        const link = document.createElement("a");
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        link.href = URL.createObjectURL(blob);
+        link.download = `SADAR_CSV_${proj.title.replace(/\s+/g, '_')}.csv`;
+        link.click();
+    }
+</script>
+
+</body>
+</html>
