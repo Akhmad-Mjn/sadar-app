@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SADAR Pro - Mobile Enterprise Survey</title>
     
-    <!-- PWA MANIFEST & SERVICE WORKER DINAMIS -->
+    <!-- PWA META -->
     <meta name="theme-color" content="#4338ca">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SADAR Pro">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1533/1533913.png">
+    
+    <!-- MANIFEST DINAMIS -->
     <link rel="manifest" id="dynamicManifest">
 
     <style>
@@ -44,7 +46,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Navbar Optimized untuk Layar HP ~7.5cm */
         .navbar { 
             background-color: var(--card-bg); 
             box-shadow: var(--shadow-sm); 
@@ -85,7 +86,6 @@
         .tab.active { color: var(--primary); background: white; box-shadow: var(--shadow-sm); }
         .tab.locked::before { content: '🔒 '; font-size: 10px;}
 
-        /* Container & Grid untuk Layar Mobile */
         .container { 
             max-width: 800px; 
             margin: 15px auto; 
@@ -101,7 +101,6 @@
         h3 { font-size: 16px; }
         .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 15px; display: block; }
         
-        /* Input & Form Ergonomis untuk Jempol */
         .input-group { margin-bottom: 14px; }
         .input-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: var(--text-main); }
         
@@ -112,14 +111,13 @@
             border-radius: var(--radius-md); 
             box-sizing: border-box; 
             font-family: inherit; 
-            font-size: 16px; /* Ukuran 16px mencegah Zoom otomatis di iOS saat diketik */
+            font-size: 16px; 
             background-color: #f9fafb;
             transition: all 0.2s ease;
             accent-color: var(--primary);
         }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1); }
 
-        /* Tombol Sentuh Ramah Jempol */
         button { 
             border: none; 
             border-radius: var(--radius-md); 
@@ -143,7 +141,6 @@
         .btn-outline:hover { background: var(--bg-color); }
         .btn-lg { padding: 14px 20px; font-size: 15px; width: 100%; }
 
-        /* Dashboard & Proyek Card */
         .dashboard-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         .dashboard-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .dashboard-actions button { flex: 1; font-size: 12px; padding: 10px; }
@@ -163,7 +160,6 @@
         .project-actions { display: flex; gap: 6px; border-top: 1px solid var(--border); padding-top: 10px; }
         .project-actions button { flex: 1; padding: 8px 4px; font-size: 12px; }
 
-        /* Builder & Form Kartu */
         .build-card { 
             background: var(--card-bg); 
             padding: 16px; 
@@ -179,7 +175,6 @@
         .req-toggle { display: inline-flex; align-items: center; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-main); }
         .req-toggle input { margin-right: 8px; width: 16px; height: 16px; accent-color: var(--primary); }
 
-        /* Mode Lapangan / Survey Cards */
         .survey-header { text-align: center; margin-bottom: 25px; }
         .survey-header h2 { font-size: 22px; color: var(--primary); margin-bottom: 8px; }
         
@@ -207,9 +202,9 @@
         
         .active-project-alert { background: #e0e7ff; color: #3730a3; padding: 10px 14px; border-radius: var(--radius-md); margin-bottom: 16px; font-weight: 600; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 8px;}
         
-        #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 16px; align-items: center; justify-content: space-between; font-size: 13px; }
+        /* Banner Install PWA yang selalu siap siaga */
+        #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 16px; align-items: center; justify-content: space-between; font-size: 13px; box-shadow: var(--shadow-md); }
 
-        /* Penyesuaian Grid Form Desain agar Elemen Tidak Sempit di Layar HP */
         .grid-builder { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
         @media(min-width: 480px) {
             .grid-builder { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
@@ -223,7 +218,7 @@
 <div class="navbar">
     <div class="nav-container">
         <div class="brand">
-            <h1>SADAR</h1><span>Mobile Pro v7.1</span>
+            <h1>SADAR</h1><span>PWA v7.2</span>
         </div>
         <div class="tabs">
             <div class="tab locked active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</div>
@@ -238,7 +233,7 @@
     <div id="pwaInstallBanner">
         <div>
             <strong>📱 Pasang SADAR ke Layar HP</strong>
-            <p style="margin: 2px 0 0 0; font-size: 11px; opacity: 0.9;">Akses offline penuh tanpa browser.</p>
+            <p style="margin: 2px 0 0 0; font-size: 11px; opacity: 0.9;">Akses instan & mode offline total.</p>
         </div>
         <button type="button" class="btn-success" id="btnInstallPWA" style="background: white; color: var(--primary); padding: 6px 12px; font-size: 12px;">Install</button>
     </div>
@@ -334,25 +329,44 @@
 </div>
 
 <script>
-    // --- SETUP PWA OTOMATIS ---
+    // --- INISIALISASI PWA YANG STABIL ---
     (() => {
-        const manifestData = {
-            "name": "SADAR Pro Mobile",
+        // 1. Generate Manifest
+        const manifest = {
+            "name": "SADAR Pro Enterprise",
             "short_name": "SADAR",
             "start_url": "./",
             "display": "standalone",
             "background_color": "#f3f4f6",
             "theme_color": "#4338ca",
-            "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png", "sizes": "512x512", "type": "image/png" }]
+            "icons": [{
+                "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }]
         };
-        document.getElementById('dynamicManifest').href = URL.createObjectURL(new Blob([JSON.stringify(manifestData)], {type: 'application/json'}));
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
 
+        // 2. Register Service Worker Standar
         if ('serviceWorker' in navigator) {
-            const swCode = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('activate', e => e.waitUntil(clients.claim())); self.addEventListener('fetch', e => { e.respondWith(caches.match(e.request).then(res => res || fetch(e.request).catch(() => caches.match('./')))); });`;
-            navigator.serviceWorker.register(URL.createObjectURL(new Blob([swCode], {type: 'text/javascript'}))).catch(() => {});
+            window.addEventListener('load', () => {
+                const swCode = `
+                    self.addEventListener('install', e => { self.skipWaiting(); });
+                    self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
+                    self.addEventListener('fetch', e => {
+                        e.respondWith(
+                            caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./')))
+                        );
+                    });
+                `;
+                const swBlob = new Blob([swCode], {type: 'text/javascript'});
+                navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+            });
         }
     })();
 
+    // Tangkap Event Prompt Install
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
@@ -364,13 +378,16 @@
         if (deferredPrompt) {
             deferredPrompt.prompt();
             let { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') document.getElementById('pwaInstallBanner').style.display = 'none';
+            if (outcome === 'accepted') {
+                document.getElementById('pwaInstallBanner').style.display = 'none';
+            }
             deferredPrompt = null;
         } else {
-            alert("Gunakan menu titik tiga (⋮) di kanan atas browser Chrome, lalu pilih 'Tambahkan ke Layar Utama' (Add to Home screen).");
+            alert("Tips: Jika tombol otomatis tidak merespons, ketuk menu titik tiga (⋮) di pojok kanan atas browser Google Chrome Anda, lalu pilih 'Tambahkan ke Layar Utama' (Add to Home screen).");
         }
     });
 
+    // --- LOGIKA UTAMA APLIKASI ---
     let appPin = localStorage.getItem('sadarPin4');
     let isAdminUnlocked = false;
     let projects = JSON.parse(localStorage.getItem('sadarProjectsV4')) || [];
@@ -380,7 +397,7 @@
 
     window.onload = function() {
         if (!appPin) {
-            let setup = prompt("🚀 INISIALISASI SADAR MOBILE\n\nBuat PIN Keamanan (Angka):");
+            let setup = prompt("🚀 INISIALISASI SADAR PWA\n\nBuat PIN Keamanan (Angka):");
             if (setup && setup.trim() !== "") {
                 localStorage.setItem('sadarPin4', setup.trim());
                 appPin = setup.trim();
@@ -469,7 +486,7 @@
         let blob = new Blob([JSON.stringify(activeProject)], {type: "application/json"});
         let link = document.createElement("a"); link.href = URL.createObjectURL(blob);
         link.download = `SADAR_Laporan_${activeProject.title.replace(/\s+/g, '_')}.sadar`; link.click();
-        alert("File .sadar berhasil diunduh untuk dikirim via WhatsApp.");
+        alert("File .sadar berhasil diunduh.");
     }
 
     function renderDashboard() {
@@ -846,7 +863,7 @@
         evaluasiLogikaLompat(); 
         const formData = new FormData(form);
         const data = {};
-        data["ID_Responden"] = document.getElementById('id_responden'].value;
+        data["ID_Responden"] = document.getElementById('id_responden').value;
         
         activeProject.schema.forEach(q => {
             const card = document.getElementById('card-' + q.id);
