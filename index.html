@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SADAR Pro - Mobile Enterprise Survey</title>
+    <title>SADAR Pro - Enterprise Survey System</title>
     
     <!-- PWA META -->
     <meta name="theme-color" content="#4338ca">
@@ -31,6 +31,7 @@
             --border: #e5e7eb;       
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
             --radius-md: 8px;
             --radius-lg: 12px;
             --radius-xl: 16px;
@@ -42,13 +43,14 @@
             margin: 0; 
             padding: 0; 
             color: var(--text-main); 
-            line-height: 1.4;
+            line-height: 1.5;
             -webkit-tap-highlight-color: transparent;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
+        /* --- NAVBAR & HEADER --- */
         .navbar { 
             background-color: var(--card-bg); 
             box-shadow: var(--shadow-sm); 
@@ -56,28 +58,30 @@
             top: 0; 
             z-index: 100; 
             width: 100%;
+            border-bottom: 1px solid var(--border);
         }
 
         .nav-container { 
             width: 100%; 
-            max-width: 800px; 
+            max-width: 1100px; 
             margin: auto;
             display: flex; 
             flex-direction: column;
             align-items: center; 
-            padding: 10px 12px; 
+            padding: 12px 16px; 
             box-sizing: border-box;
+            gap: 15px;
         }
 
-        .brand-container { display: flex; flex-direction: column; align-items: center; padding: 4px 0 8px 0; text-align: center; }
+        .brand-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .brand-main { display: flex; align-items: center; gap: 8px; }
-        .brand-main h1 { margin: 0; color: var(--primary); font-size: 22px; font-weight: 800; letter-spacing: 1px;}
-        .brand-main span { background: var(--secondary); color: white; padding: 2px 6px; border-radius: 12px; font-size: 10px; font-weight: bold;}
-        .brand-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin-top: 2px; text-transform: uppercase; }
+        .brand-main h1 { margin: 0; color: var(--primary); font-size: 24px; font-weight: 800; letter-spacing: 1px;}
+        .brand-main span { background: var(--secondary); color: white; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;}
+        .brand-sub { font-size: 11px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin-top: 4px; text-transform: uppercase; }
 
-        .tabs { display: flex; width: 100%; gap: 6px; background: #e5e7eb; padding: 3px; border-radius: var(--radius-md); }
+        .tabs { display: flex; width: 100%; gap: 6px; background: #e5e7eb; padding: 4px; border-radius: var(--radius-md); }
         .tab { 
-            padding: 10px 8px; 
+            padding: 10px 12px; 
             cursor: pointer; 
             font-weight: 600; 
             color: var(--text-muted); 
@@ -85,16 +89,18 @@
             text-align: center;
             border-radius: 6px;
             transition: all 0.2s ease; 
-            font-size: 12px; 
+            font-size: 13px; 
             white-space: nowrap;
         }
+        .tab:hover { color: var(--primary); }
         .tab.active { color: var(--primary); background: white; box-shadow: var(--shadow-sm); }
-        .tab.locked::before { content: '🔒 '; font-size: 10px;}
+        .tab.locked::before { content: '🔒 '; font-size: 11px;}
 
+        /* --- LAYOUT UTAMA --- */
         .container { 
-            max-width: 800px; 
-            margin: 15px auto; 
-            padding: 0 12px; 
+            max-width: 1100px; 
+            margin: 20px auto; 
+            padding: 0 16px; 
             box-sizing: border-box;
             flex: 1;
             width: 100%;
@@ -102,29 +108,31 @@
 
         .section { display: none; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2 { font-size: 20px; }
-        h3 { font-size: 16px; }
-        .subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 15px; display: block; }
+        h2 { font-size: 22px; margin-top: 0;}
+        h3 { font-size: 18px; margin-top: 0;}
+        .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; display: block; }
         
-        .input-group { margin-bottom: 14px; }
-        .input-group label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: var(--text-main); }
+        /* --- FORM ELEMENTS --- */
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 8px; color: var(--text-main); }
         
         input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea { 
             width: 100%; 
-            padding: 12px 14px; 
+            padding: 12px 16px; 
             border: 1px solid var(--border); 
             border-radius: var(--radius-md); 
             box-sizing: border-box; 
             font-family: inherit; 
-            font-size: 16px; 
+            font-size: 16px; /* Mencegah zoom di HP */
             background-color: #f9fafb;
             transition: all 0.2s ease;
             accent-color: var(--primary);
         }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1); }
 
+        /* --- BUTTONS --- */
         button { 
             border: none; 
             border-radius: var(--radius-md); 
@@ -134,97 +142,158 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 12px 16px;
+            gap: 8px;
+            padding: 12px 18px;
             font-size: 14px;
         }
         button:active { transform: scale(0.97); }
         .btn-primary { background: var(--primary); color: white; box-shadow: var(--shadow-sm); }
+        .btn-primary:hover { background: var(--primary-hover); }
         .btn-success { background: var(--success); color: white; box-shadow: var(--shadow-sm); }
+        .btn-success:hover { background: var(--success-hover); }
         .btn-warning { background: var(--warning); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .btn-dark { background: #374151; color: white; }
+        .btn-dark:hover { background: #1f2937; }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
         .btn-outline:hover { background: var(--bg-color); }
-        .btn-lg { padding: 14px 20px; font-size: 15px; width: 100%; }
+        .btn-lg { padding: 14px 20px; font-size: 16px; width: 100%; }
 
-        .dashboard-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .dashboard-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .dashboard-actions button { flex: 1; font-size: 12px; padding: 10px; }
+        /* --- DASHBOARD --- */
+        .dashboard-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+        .dashboard-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .dashboard-actions button { flex: 1; min-width: 120px; }
         
-        .projects-grid { display: flex; flex-direction: column; gap: 12px; }
+        .projects-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
         .project-card { 
             background: var(--card-bg); 
             border: 1px solid var(--border); 
-            padding: 16px; 
-            border-radius: var(--radius-md); 
+            padding: 20px; 
+            border-radius: var(--radius-lg); 
             position: relative; 
             box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
         }
-        .project-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); border-radius: 4px 0 0 4px;}
-        .project-info h3 { font-size: 16px; margin: 0 0 6px 0; }
-        .project-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
-        .project-actions { display: flex; gap: 6px; border-top: 1px solid var(--border); padding-top: 10px; }
-        .project-actions button { flex: 1; padding: 8px 4px; font-size: 12px; }
+        .project-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary); border-radius: 12px 0 0 12px;}
+        .project-info h3 { font-size: 18px; margin: 0 0 8px 0; }
+        .project-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+        .project-actions { display: flex; gap: 8px; border-top: 1px solid var(--border); padding-top: 15px; flex-wrap: wrap;}
+        .project-actions button { flex: 1; padding: 8px; font-size: 13px; }
 
+        /* --- BUILDER & CARDS --- */
         .build-card { 
             background: var(--card-bg); 
-            padding: 16px; 
+            padding: 20px; 
             border: 1px solid var(--border); 
-            margin-bottom: 16px; 
-            border-radius: var(--radius-md); 
+            margin-bottom: 20px; 
+            border-radius: var(--radius-lg); 
             box-shadow: var(--shadow-sm); 
+            transition: all 0.3s ease;
         }
-        .build-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px; }
-        .q-id-badge { background: var(--bg-color); color: var(--text-muted); padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .build-card:focus-within { border-color: #a5b4fc; box-shadow: var(--shadow-md); }
+        .build-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; }
+        .q-id-badge { background: var(--bg-color); color: var(--text-muted); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
         
-        .logic-panel { background: #f8fafc; padding: 12px; border-radius: var(--radius-md); border-left: 3px solid var(--secondary); margin: 12px 0; }
-        .req-toggle { display: inline-flex; align-items: center; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text-main); }
-        .req-toggle input { margin-right: 8px; width: 16px; height: 16px; accent-color: var(--primary); }
+        .logic-panel { background: #f8fafc; padding: 15px; border-radius: var(--radius-md); border-left: 4px solid var(--secondary); margin: 15px 0; }
+        .req-toggle { display: inline-flex; align-items: center; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-main); }
+        .req-toggle input { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;}
 
-        .survey-header { text-align: center; margin-bottom: 25px; }
-        .survey-header h2 { font-size: 22px; color: var(--primary); margin-bottom: 8px; }
+        .grid-builder { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
+
+        /* --- MODE LAPANGAN --- */
+        .survey-header { text-align: center; margin-bottom: 30px; }
+        .survey-header h2 { font-size: 26px; color: var(--primary); margin-bottom: 10px; }
         
         .q-card { 
             background: var(--card-bg); 
-            padding: 16px; 
-            margin-bottom: 16px; 
+            padding: 24px; 
+            margin-bottom: 20px; 
             border: 1px solid var(--border); 
-            border-radius: var(--radius-lg); 
+            border-radius: var(--radius-xl); 
             box-shadow: var(--shadow-sm); 
+            transition: all 0.3s ease; 
         }
-        .q-title { font-weight: 600; margin-bottom: 14px; color: var(--text-main); font-size: 15px; line-height: 1.4; }
-        .req-star { color: var(--danger); margin-left: 3px; }
+        .q-title { font-weight: 600; margin-bottom: 16px; color: var(--text-main); font-size: 16px; line-height: 1.5; }
+        .req-star { color: var(--danger); margin-left: 4px; }
         
-        .options-list { display: flex; flex-direction: column; gap: 8px; }
+        .options-list { display: flex; flex-direction: column; gap: 10px; }
         .options-list label { 
-            display: flex; align-items: center; cursor: pointer; padding: 12px 14px; 
+            display: flex; align-items: center; cursor: pointer; padding: 14px 16px; 
             border-radius: var(--radius-md); border: 1px solid var(--border); 
-            background: #f9fafb; font-size: 14px; font-weight: 500;
+            background: #f9fafb; font-size: 15px; font-weight: 500;
+            transition: all 0.2s ease;
         }
-        .options-list input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--primary); }
+        .options-list label:hover { background: white; border-color: var(--primary); }
+        .options-list input { margin-right: 15px; width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer;}
 
         input[readonly] { background-color: var(--bg-color); color: var(--text-muted); border-style: dashed; }
-        .btn-gps { background: var(--card-bg); border: 2px solid var(--secondary); color: var(--secondary); font-weight: bold; padding: 12px; width: 100%; border-radius: var(--radius-md); }
+        .btn-gps { background: var(--card-bg); border: 2px solid var(--secondary); color: var(--secondary); font-weight: bold; padding: 14px; width: 100%; border-radius: var(--radius-md); }
+        .btn-gps:hover { background: var(--secondary); color: white;}
         
-        .active-project-alert { background: #e0e7ff; color: #3730a3; padding: 10px 14px; border-radius: var(--radius-md); margin-bottom: 16px; font-weight: 600; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 8px;}
+        .active-project-alert { background: #e0e7ff; color: #3730a3; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 20px; font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;}
         
-        #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 16px; align-items: center; justify-content: space-between; font-size: 13px; box-shadow: var(--shadow-md); }
+        #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 20px; align-items: center; justify-content: space-between; font-size: 14px; box-shadow: var(--shadow-md); }
 
-        /* Footer Styling */
         .app-footer {
             text-align: center;
-            padding: 20px 10px;
-            font-size: 11px;
+            padding: 24px 15px;
+            font-size: 12px;
             color: var(--text-muted);
             border-top: 1px solid var(--border);
             background: var(--card-bg);
-            margin-top: 40px;
+            margin-top: 50px;
         }
 
-        .grid-builder { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
-        @media(min-width: 480px) {
-            .grid-builder { display: grid; grid-template-columns: 1fr 2fr; gap: 12px; }
+        /* =========================================================
+           RESPONSIVE DESKTOP OVERRIDES (Layar > 768px Laptop/PC)
+           ========================================================= */
+        @media (min-width: 768px) {
+            .nav-container { 
+                flex-direction: row; 
+                justify-content: space-between; 
+                padding: 15px 24px; 
+            }
+            .brand-container { 
+                align-items: flex-start; 
+                text-align: left; 
+                padding: 0; 
+            }
+            .tabs { 
+                width: auto; 
+                background: transparent; 
+                padding: 0; 
+                gap: 10px; 
+            }
+            .tab { 
+                padding: 10px 20px; 
+                background: var(--bg-color); 
+                border: 1px solid var(--border); 
+            }
+            .tab:hover { 
+                background: white; 
+                border-color: var(--primary); 
+                transform: translateY(-1px); 
+            }
+            .tab.active { 
+                border-color: var(--primary); 
+            }
+
+            .container { padding: 0 24px; margin: 30px auto; }
+            
+            .dashboard-header { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+            .dashboard-actions { flex-wrap: nowrap; }
+            .dashboard-actions button { min-width: 140px; }
+
+            .projects-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+            .project-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+            .grid-builder { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+            .logic-panel { display: flex; align-items: center; gap: 15px; }
+            .logic-panel > label { margin-bottom: 0; min-width: 180px; }
+            .logic-panel > div { flex: 1; margin: 0; }
+
+            .q-card { padding: 30px; border-radius: 20px; }
+            .q-title { font-size: 18px; }
         }
     </style>
 </head>
@@ -236,14 +305,14 @@
     <div class="nav-container">
         <div class="brand-container">
             <div class="brand-main">
-                <h1>SADAR</h1><span>PWA v7.4</span>
+                <h1>SADAR</h1><span>PWA v8.0</span>
             </div>
             <div class="brand-sub">Sistem Aplikasi Data Responden</div>
         </div>
         <div class="tabs">
             <div class="tab locked active" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</div>
-            <div class="tab locked" id="tab-builder" onclick="switchTab('builder')">Desain</div>
-            <div class="tab" id="tab-input" onclick="switchTab('input')">Lapangan</div>
+            <div class="tab locked" id="tab-builder" onclick="switchTab('builder')">Desain Proyek</div>
+            <div class="tab" id="tab-input" onclick="switchTab('input')">Mode Lapangan</div>
         </div>
     </div>
 </div>
@@ -252,10 +321,10 @@
     <!-- BANNER PWA -->
     <div id="pwaInstallBanner">
         <div>
-            <strong>📱 Pasang SADAR ke Layar HP</strong>
-            <p style="margin: 2px 0 0 0; font-size: 11px; opacity: 0.9;">Akses instan & mode offline total.</p>
+            <strong>📱 Pasang SADAR ke Perangkat Anda</strong>
+            <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.9;">Akses instan & mode offline total tanpa browser.</p>
         </div>
-        <button type="button" class="btn-success" id="btnInstallPWA" style="background: white; color: var(--primary); padding: 6px 12px; font-size: 12px;">Install</button>
+        <button type="button" class="btn-success" id="btnInstallPWA" style="background: white; color: var(--primary); padding: 8px 16px;">Install Aplikasi</button>
     </div>
 
     <!-- DASHBOARD -->
@@ -263,11 +332,11 @@
         <div class="dashboard-header">
             <div>
                 <h2>Workspace Admin</h2>
-                <span class="subtitle">Manajemen Proyek Survei Lapangan.</span>
+                <span class="subtitle">Manajemen Proyek Survei & Ekspor Data.</span>
             </div>
             <div class="dashboard-actions">
-                <button class="btn-outline" onclick="resetPin()">⚙️ PIN</button>
-                <button class="btn-dark" onclick="klikImport()">📥 Import</button>
+                <button class="btn-outline" onclick="resetPin()">⚙️ Reset PIN</button>
+                <button class="btn-dark" onclick="klikImport()">📥 Import (.sadar)</button>
                 <button class="btn-primary" onclick="buatProyekBaru()">+ Proyek Baru</button>
             </div>
         </div>
@@ -277,22 +346,22 @@
     <!-- MODE DESAIN -->
     <div id="builder" class="section">
         <div class="active-project-alert">
-            <span id="lblActiveProjectDesign" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">📁 Proyek: -</span>
-            <button class="btn-outline" style="background: white; border-color: #c7d2fe; color: var(--primary); padding: 6px 10px; font-size: 11px;" onclick="switchTab('input')">Uji Lapangan ➔</button>
+            <span id="lblActiveProjectDesign" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">📁 Proyek Aktif: -</span>
+            <button class="btn-outline" style="background: white; border-color: #c7d2fe; color: var(--primary); padding: 8px 14px;" onclick="switchTab('input')">Uji Lapangan ➔</button>
         </div>
         
-        <div style="background: var(--card-bg); padding: 16px; border: 1px solid var(--border); margin-bottom: 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border-top: 4px solid var(--primary);">
+        <div style="background: var(--card-bg); padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-top: 4px solid var(--primary);">
             <div class="input-group" style="margin: 0;">
                 <label>Judul Resmi Kuesioner:</label>
-                <input type="text" id="surveyTitle" placeholder="Misal: Survei Lansia 2026">
+                <input type="text" id="surveyTitle" placeholder="Misal: Survei Kinerja Layanan 2026" style="font-size: 18px; font-weight: bold;">
             </div>
         </div>
 
         <div id="questionsContainer"></div>
 
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-            <button class="btn-outline btn-lg" onclick="addQuestionUI()">+ Tambah Pertanyaan</button>
-            <button class="btn-primary btn-lg" onclick="saveKuesionerSchema()">💾 Simpan & Terapkan</button>
+        <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap;">
+            <button class="btn-outline btn-lg" style="flex: 1;" onclick="addQuestionUI()">+ Tambah Pertanyaan</button>
+            <button class="btn-primary btn-lg" style="flex: 1;" onclick="saveKuesionerSchema()">💾 Simpan & Terapkan</button>
         </div>
     </div>
 
@@ -301,48 +370,48 @@
         <div class="survey-header">
             <h2 id="displayTitle">Sistem Siaga (Standby)</h2>
             
-            <div id="emptyInputState" style="text-align:center; padding:30px 15px; background:white; border-radius:12px; border:1px dashed var(--border); margin-top: 15px;">
-                <p style="color:var(--text-muted); margin-bottom: 15px; font-size: 13px;">Belum ada proyek aktif. Silakan muat file proyek (.sadar) dari Administrator.</p>
+            <div id="emptyInputState" style="text-align:center; padding:50px 20px; background:white; border-radius:12px; border:1px dashed var(--border); margin-top: 20px;">
+                <p style="color:var(--text-muted); margin-bottom: 20px; font-size: 14px;">Belum ada proyek yang aktif di layar ini.<br>Silakan muat file proyek dari Administrator Anda.</p>
                 <button class="btn-dark btn-lg" style="width: auto;" onclick="klikImport()">📥 Load File Proyek (.sadar)</button>
             </div>
 
-            <div id="activeInputState" style="display: none; justify-content: center; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap;">
-                <span class="subtitle" id="statusBar" style="margin:0; font-size: 12px;">Data: <strong id="countData" style="color: var(--primary);">0</strong></span>
-                <button type="button" class="btn-outline" style="padding: 6px 10px; font-size: 12px;" onclick="bukaDaftarResponden()">🔍 Cari/Edit</button>
-                <button type="button" class="btn-dark" style="padding: 6px 10px; font-size: 12px;" onclick="exportProyekAktif()">📤 Backup (.sadar)</button>
+            <div id="activeInputState" style="display: none; justify-content: center; gap: 12px; margin-top: 15px; align-items: center; flex-wrap: wrap;">
+                <span class="subtitle" id="statusBar" style="margin:0; font-size: 14px;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
+                <button type="button" class="btn-outline" style="padding: 8px 14px; font-size: 13px;" onclick="bukaDaftarResponden()">🔍 Cari / Koreksi Data</button>
+                <button type="button" class="btn-dark" style="padding: 8px 14px; font-size: 13px;" onclick="exportProyekAktif()">📤 Backup File (.sadar)</button>
             </div>
         </div>
         
         <!-- Modal Pencarian Data Edit -->
-        <div id="modalEdit" style="display: none; background: var(--card-bg); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: var(--shadow-md); margin-bottom: 16px; border-top: 4px solid var(--warning);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3 style="margin:0; font-size: 16px;">🔍 Koreksi Data Responden</h3>
-                <button type="button" class="btn-outline" style="padding: 4px 8px; font-size:11px; border-color: var(--danger); color: var(--danger);" onclick="tutupDaftarResponden()">Tutup</button>
+        <div id="modalEdit" style="display: none; background: var(--card-bg); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-lg); margin-bottom: 24px; border-top: 4px solid var(--warning);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin:0; font-size: 18px;">🔍 Koreksi Data Responden</h3>
+                <button type="button" class="btn-outline" style="padding: 6px 12px; font-size:12px; border-color: var(--danger); color: var(--danger);" onclick="tutupDaftarResponden()">Tutup</button>
             </div>
-            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                <input type="number" id="inputCariEdit" placeholder="Ketik ID (Cth: 5)" style="flex: 1; padding: 10px; background: white;" onkeypress="if(event.key === 'Enter') { cariDataEdit(); return false; }">
-                <button type="button" class="btn-primary" onclick="cariDataEdit()" style="padding: 10px 14px;">Cari</button>
+            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                <input type="number" id="inputCariEdit" placeholder="Ketik ID (Cth: 5)" style="flex: 1; padding: 12px; background: white;" onkeypress="if(event.key === 'Enter') { cariDataEdit(); return false; }">
+                <button type="button" class="btn-primary" onclick="cariDataEdit()">Cari Data</button>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight:600; border-bottom: 1px solid var(--border); padding-bottom: 6px;">15 Data Terakhir:</p>
-            <div id="listEditContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 6px; max-height: 150px; overflow-y: auto;"></div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight:600; border-bottom: 1px solid var(--border); padding-bottom: 8px;">15 Data Terakhir:</p>
+            <div id="listEditContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 10px; max-height: 200px; overflow-y: auto;"></div>
         </div>
         
         <form id="dataForm" onchange="evaluasiLogikaLompat()" oninput="evaluasiLogikaLompat()" style="display: none;">
             <div class="q-card" id="core-id" style="border-left: 4px solid var(--success);">
-                <div class="q-title" style="font-size: 13px; margin-bottom: 8px;">ID Rekam Data (Sistem)</div>
+                <div class="q-title">ID Rekam Data (Sistem)</div>
                 <input type="number" id="id_responden" name="ID_Responden" readonly required>
-                <div id="editWarning" style="background: #fffbeb; color: #b45309; padding: 8px 12px; border-radius: 6px; border: 1px solid #fde68a; display:none; margin-top: 10px; font-weight: 600; font-size: 12px;">
-                    ⚠️ MODE KOREKSI AKTIF: Mengubah data tersimpan.
+                <div id="editWarning" style="background: #fffbeb; color: #b45309; padding: 12px 16px; border-radius: 8px; border: 1px solid #fde68a; display:none; margin-top: 15px; font-weight: 600; font-size: 13px;">
+                    ⚠️ MODE KOREKSI AKTIF: Anda sedang mengubah data yang sudah tersimpan.
                 </div>
             </div>
 
             <div id="dynamicFormContainer"></div>
 
-            <button type="button" id="btnSubmitData" class="btn-success btn-lg" onclick="simpanData()" style="margin-top: 20px; border-radius: var(--radius-lg); width: 100%;">
-                Kirim & Simpan Data 🚀
+            <button type="button" id="btnSubmitData" class="btn-success btn-lg" onclick="simpanData()" style="margin-top: 30px; border-radius: var(--radius-xl);">
+                Kirim & Simpan Data Baru 🚀
             </button>
-            <button type="button" id="btnBatalEdit" class="btn-outline btn-lg" onclick="batalEdit()" style="display: none; margin-top: 10px; border-radius: var(--radius-lg); width: 100%; color: var(--danger); border-color: var(--danger);">
-                ❌ Batal Koreksi
+            <button type="button" id="btnBatalEdit" class="btn-outline btn-lg" onclick="batalEdit()" style="display: none; margin-top: 15px; border-radius: var(--radius-xl); color: var(--danger); border-color: var(--danger);">
+                ❌ Batal Koreksi (Kembali Input Baru)
             </button>
         </form>
     </div>
@@ -405,7 +474,7 @@
             }
             deferredPrompt = null;
         } else {
-            alert("Tips: Ketuk menu titik tiga (⋮) di pojok kanan atas browser Google Chrome Anda, lalu pilih 'Tambahkan ke Layar Utama'.");
+            alert("Tips: Ketuk menu titik tiga (⋮) di pojok kanan atas browser Google Chrome Anda, lalu pilih 'Tambahkan ke Layar Utama' atau 'Install App'.");
         }
     });
 
@@ -419,13 +488,13 @@
 
     window.onload = function() {
         if (!appPin) {
-            let setup = prompt("🚀 INISIALISASI SADAR PWA\n\nBuat PIN Keamanan (Angka):");
+            let setup = prompt("🚀 INISIALISASI SADAR PWA\n\nBuat PIN Keamanan Admin (Angka):");
             if (setup && setup.trim() !== "") {
                 localStorage.setItem('sadarPin4', setup.trim());
                 appPin = setup.trim();
                 isAdminUnlocked = true; 
             } else {
-                alert("Wajib membuat PIN.");
+                alert("Wajib membuat PIN untuk melindungi Dashboard.");
                 location.reload();
                 return;
             }
@@ -434,7 +503,7 @@
     }
 
     function simpanKeLocalStorage() { localStorage.setItem('sadarProjectsV4', JSON.stringify(projects)); }
-    function resetPin() { if(confirm("Reset PIN?")) { localStorage.removeItem('sadarPin4'); location.reload(); } }
+    function resetPin() { if(confirm("Reset PIN? Akses akan ditutup hingga PIN baru dibuat.")) { localStorage.removeItem('sadarPin4'); location.reload(); } }
 
     function mintaAksesAdmin() {
         if (isAdminUnlocked) return true;
@@ -445,7 +514,7 @@
 
     function switchTab(tabId) {
         if(tabId === 'dashboard' || tabId === 'builder') { if (!mintaAksesAdmin()) return; }
-        if(tabId === 'builder' && !currentProjectId) { alert("Pilih proyek dari Dashboard dulu."); return; }
+        if(tabId === 'builder' && !currentProjectId) { alert("Pilih atau buat proyek dari Dashboard terlebih dahulu."); return; }
 
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -482,15 +551,15 @@
                 if(!imported.id || !imported.schema) throw new Error();
                 let existingIdx = projects.findIndex(p => p.id === imported.id);
                 if(existingIdx !== -1) {
-                    if(confirm(`Proyek "${imported.title}" sudah ada. Timpa data?`)) projects[existingIdx] = imported;
+                    if(confirm(`Proyek "${imported.title}" sudah ada di aplikasi ini.\n\nKlik OK untuk Update/Timpa data lama, atau Batal untuk menyimpannya sebagai salinan baru.`)) projects[existingIdx] = imported;
                     else { imported.id = 'PROJ_' + Date.now(); imported.title += " (Copy)"; projects.push(imported); }
                 } else { projects.push(imported); }
                 simpanKeLocalStorage(); event.target.value = '';
-                alert("✅ Proyek dimuat!");
+                alert("✅ File Proyek berhasil dimuat!");
                 currentProjectId = imported.id; activeProject = projects.find(p => p.id === imported.id);
                 if(isAdminUnlocked) renderDashboard();
                 else { document.getElementById('displayTitle').innerText = activeProject.title; switchTab('input'); }
-            } catch(err) { alert("File .sadar tidak valid."); }
+            } catch(err) { alert("File yang Anda masukkan tidak valid atau rusak."); }
         };
         reader.readAsText(file);
     }
@@ -500,39 +569,43 @@
         if(!p) return;
         let blob = new Blob([JSON.stringify(p)], {type: "application/json"});
         let link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-        link.download = `SADAR_${p.title.replace(/\s+/g, '_')}.sadar`; link.click();
+        let date = new Date().toISOString().slice(0,10);
+        link.download = `SADAR_${p.title.replace(/\s+/g, '_')}_${date}.sadar`; link.click();
     }
 
     function exportProyekAktif() {
         if(!activeProject) return;
         let blob = new Blob([JSON.stringify(activeProject)], {type: "application/json"});
         let link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-        link.download = `SADAR_Laporan_${activeProject.title.replace(/\s+/g, '_')}.sadar`; link.click();
-        alert("File .sadar berhasil diunduh.");
+        let date = new Date().toISOString().slice(0,10);
+        link.download = `SADAR_Laporan_${activeProject.title.replace(/\s+/g, '_')}_${date}.sadar`; link.click();
+        alert("File laporan .sadar berhasil diunduh. Silakan kirim file tersebut ke Koordinator Anda.");
     }
 
     function renderDashboard() {
         const container = document.getElementById('projectListContainer');
         container.innerHTML = '';
         if(projects.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:40px 10px; color:var(--text-muted); background:white; border-radius:12px; border:1px dashed var(--border); font-size:13px;">Workspace Kosong.<br>Buat atau Import file .sadar.</div>';
+            container.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:60px 20px; color:var(--text-muted); background:white; border-radius:12px; border:1px dashed var(--border);"><h3>Workspace Kosong</h3><p>Mulai dengan membuat Proyek Baru atau Import file .sadar.</p></div>';
             return;
         }
         projects.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
         projects.forEach(p => {
+            const dateStr = new Date(p.lastModified).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
             let html = `
                 <div class="project-card">
                     <div class="project-info">
                         <h3>${p.title}</h3>
                         <div class="project-meta">
-                            <span>👥 ${p.data.length} Data</span>
+                            <span>🕒 ${dateStr}</span>
+                            <span style="color:var(--primary); font-weight:bold;">👥 ${p.data.length} Data</span>
                         </div>
                     </div>
                     <div class="project-actions">
                         <button class="btn-outline" onclick="bukaProyek('${p.id}')">✏️ Buka</button>
                         <button class="btn-dark" onclick="exportProyekSpesifik('${p.id}')">📤 .sadar</button>
-                        <button class="btn-success" onclick="unduhDataAdmin('${p.id}')">📊 CSV</button>
-                        <button class="btn-danger" style="flex:0.4;" onclick="hapusProyek('${p.id}')">🗑️</button>
+                        <button class="btn-success" onclick="unduhDataAdmin('${p.id}')">📊 CSV Excel</button>
+                        <button class="btn-danger" style="flex:0.3; min-width:40px;" onclick="hapusProyek('${p.id}')" title="Hapus Permanen">🗑️</button>
                     </div>
                 </div>
             `;
@@ -541,7 +614,7 @@
     }
 
     function buatProyekBaru() {
-        let namaProyek = prompt("Nama Proyek Survei:");
+        let namaProyek = prompt("Nama Proyek Survei / Kuesioner Baru:");
         if(!namaProyek || namaProyek.trim() === "") return;
         let newProject = { id: 'PROJ_' + Date.now(), title: namaProyek, lastModified: new Date().toISOString(), schema: [], data: [] };
         projects.push(newProject); simpanKeLocalStorage(); bukaProyek(newProject.id);
@@ -549,13 +622,14 @@
 
     function bukaProyek(id) {
         currentProjectId = id; activeProject = projects.find(p => p.id === id);
-        document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek: <strong>${activeProject.title}</strong>`;
+        document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`;
         document.getElementById('displayTitle').innerText = activeProject.title;
         switchTab('builder');
     }
 
     function hapusProyek(id) {
-        if(confirm("Yakin hapus permanen proyek ini?")) {
+        let pName = projects.find(p => p.id === id).title;
+        if(confirm(`TINDAKAN DESTRUKTIF!\nYakin ingin menghapus permanen proyek "${pName}" beserta semua datanya?`)) {
             projects = projects.filter(p => p.id !== id);
             if(currentProjectId === id) { currentProjectId = null; activeProject = null; }
             simpanKeLocalStorage(); renderDashboard();
@@ -564,7 +638,7 @@
 
     function updateLabels() {
         document.querySelectorAll('#questionsContainer .build-card').forEach((card, index) => {
-            card.querySelector('.q-id-badge').innerText = "Q" + (index + 1);
+            card.querySelector('.q-id-badge').innerText = "KODE: Q" + (index + 1);
         });
     }
 
@@ -595,45 +669,45 @@
         div.className = 'build-card';
         div.innerHTML = `
             <div class="build-header">
-                <span class="q-id-badge">Q?</span>
+                <span class="q-id-badge">KODE: Q?</span>
                 <label class="req-toggle"><input type="checkbox" class="q-req-box"> Wajib Diisi</label>
             </div>
             <div class="grid-builder">
                 <div class="input-group" style="margin:0;">
-                    <label>Variabel Excel</label>
-                    <input type="text" class="q-var" placeholder="Cth: usia" oninput="this.value = this.value.replace(/\\s+/g, '_').toLowerCase()">
+                    <label>Variabel (Header Excel)</label>
+                    <input type="text" class="q-var" placeholder="Misal: usia" oninput="this.value = this.value.replace(/\\s+/g, '_').toLowerCase()">
                 </div>
                 <div class="input-group" style="margin:0;">
-                    <label>Teks Pertanyaan</label>
-                    <input type="text" class="q-text" placeholder="Tuliskan pertanyaan...">
+                    <label>Teks Pertanyaan Kuesioner</label>
+                    <input type="text" class="q-text" placeholder="Tuliskan pertanyaan secara lengkap...">
                 </div>
             </div>
-            <div class="input-group" style="margin-top: 12px;">
+            <div class="input-group" style="margin-top: 15px;">
                 <label>Format Jawaban</label>
                 <select class="q-type" onchange="toggleOptions(this)">
                     <option value="text">Teks Pendek</option>
                     <option value="textarea">Teks Paragraf</option>
                     <option value="number">Angka (Numerik)</option>
                     <option value="radio">Pilihan Ganda (Pilih 1)</option>
-                    <option value="checkbox">Kotak Centang (>1)</option>
+                    <option value="checkbox">Kotak Centang (Pilih >1)</option>
                     <option value="dropdown">Dropdown List</option>
                     <option value="date">Tanggal</option>
-                    <option value="gps">📍 Sensor GPS</option>
+                    <option value="gps">📍 Sensor Koordinat GPS</option>
                 </select>
             </div>
-            <div class="input-group q-options" style="display:none; background: #fffbeb; padding: 12px; border-radius: 8px; border: 1px dashed #fcd34d;">
-                <label>Opsi Pilihan (Pisah KOMA)</label>
-                <input type="text" class="q-opt-val" placeholder="Ya, Tidak" style="background: white;">
+            <div class="input-group q-options" style="display:none; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px dashed #fcd34d;">
+                <label>Opsi Jawaban (Pisahkan dengan KOMA)</label>
+                <input type="text" class="q-opt-val" placeholder="Sangat Baik, Baik, Cukup, Kurang" style="background: white;">
             </div>
             <div class="logic-panel">
-                <label style="font-size: 12px; font-weight:bold; margin-bottom: 6px; display:block;">⚡ Tampilkan HANYA JIKA:</label>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" class="logic-parent" placeholder="Cth: Q1" style="flex: 1; background:white; padding:8px; font-size:13px;">
-                    <input type="text" class="logic-val" placeholder="Cth: Ya" style="flex: 1; background:white; padding:8px; font-size:13px;">
+                <label style="font-size: 13px; font-weight:bold; color: var(--text-main);">⚡ Tampilkan Pertanyaan Ini HANYA JIKA:</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" class="logic-parent" placeholder="Kode Induk (Cth: Q1)" style="flex: 1; background:white; min-width: 120px;">
+                    <input type="text" class="logic-val" placeholder="Jawaban Target (Cth: Ya)" style="flex: 2; background:white; min-width: 150px;">
                 </div>
             </div>
-            <div style="text-align: right; margin-top: 10px;">
-                <button class="btn-outline" style="color: var(--danger); border-color: var(--danger); padding: 6px 10px; font-size: 12px;" onclick="this.parentElement.parentElement.remove(); updateLabels();">Hapus Pertanyaan</button>
+            <div style="text-align: right; margin-top: 15px;">
+                <button class="btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="this.parentElement.parentElement.remove(); updateLabels();">Hapus Blok Pertanyaan</button>
             </div>
         `;
         document.getElementById('questionsContainer').appendChild(div);
@@ -671,17 +745,17 @@
             tempSchema.push({ id: qID, varName: qVar, text: qText, type: qType, required: qReq, options: optionsArray, logic: { parentId: lParent, requiredValue: lVal } });
         });
 
-        if (tempSchema.length === 0) return alert("Belum ada pertanyaan.");
-        if (!isValid) return alert("Pastikan teks pertanyaan & opsi terisi.");
+        if (tempSchema.length === 0) return alert("Belum ada instrumen pertanyaan yang ditambahkan.");
+        if (!isValid) return alert("Simpan Dibatalkan: Pastikan teks pertanyaan & opsi pilihan tidak dibiarkan kosong.");
         if(activeProject.data.length > 0 && JSON.stringify(tempSchema.map(q=>q.id)) !== JSON.stringify(activeProject.schema.map(q=>q.id))) {
-            if(!confirm("⚠️ Data lama akan direset karena struktur berubah. Lanjutkan?")) return;
+            if(!confirm("⚠️ PERINGATAN STRUKTUR BERUBAH\nData lama di proyek ini tidak kompatibel dan akan dihapus. Lanjutkan?")) return;
             activeProject.data = [];
         }
 
         activeProject.schema = tempSchema; activeProject.title = newTitle; activeProject.lastModified = new Date().toISOString();
         simpanKeLocalStorage();
-        alert("Desain berhasil disimpan!");
-        document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek: <strong>${activeProject.title}</strong>`;
+        alert("Desain Kuesioner berhasil dikunci dan diterapkan ke Mode Lapangan!");
+        document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`;
         document.getElementById('displayTitle').innerText = activeProject.title;
     }
 
@@ -697,12 +771,12 @@
             let html = `<div class="q-card" id="card-${q.id}" data-parent="${q.logic.parentId}" data-reqval="${q.logic.requiredValue}">
                 <div class="q-title">${index + 1}. ${q.text} ${reqMark}</div>`;
             
-            if (q.type === 'text') { html += `<input type="text" name="${q.id}" ${reqAttr} placeholder="Ketik jawaban...">`; } 
-            else if (q.type === 'textarea') { html += `<textarea name="${q.id}" rows="3" ${reqAttr} placeholder="Jelaskan detail..."></textarea>`; }
+            if (q.type === 'text') { html += `<input type="text" name="${q.id}" ${reqAttr} placeholder="Ketik jawaban Anda...">`; } 
+            else if (q.type === 'textarea') { html += `<textarea name="${q.id}" rows="3" ${reqAttr} placeholder="Jelaskan secara detail..."></textarea>`; }
             else if (q.type === 'number') { html += `<input type="number" name="${q.id}" ${reqAttr} placeholder="0">`; } 
             else if (q.type === 'date') { html += `<input type="date" name="${q.id}" ${reqAttr}>`; }
             else if (q.type === 'dropdown') {
-                html += `<select name="${q.id}" ${reqAttr}><option value="">-- Pilih Opsi --</option>`;
+                html += `<select name="${q.id}" ${reqAttr}><option value="">-- Silakan Pilih Opsi --</option>`;
                 q.options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; });
                 html += `</select>`;
             }
@@ -718,8 +792,8 @@
             }
             else if (q.type === 'gps') {
                 html += `
-                    <button type="button" class="btn-gps" onclick="ambilLokasi('${q.id}')">📍 Ambil Koordinat GPS</button>
-                    <input type="text" id="gps-${q.id}" name="${q.id}" readonly placeholder="Belum direkam" ${reqAttr} style="margin-top:8px;">
+                    <button type="button" class="btn-gps" onclick="ambilLokasi('${q.id}')">📍 Sinkronisasi Satelit Lokasi</button>
+                    <input type="text" id="gps-${q.id}" name="${q.id}" readonly placeholder="Koordinat belum direkam" ${reqAttr} style="margin-top:10px;">
                 `;
             }
             html += `</div>`;
@@ -729,17 +803,17 @@
 
     function ambilLokasi(qID) {
         const inputField = document.getElementById(`gps-${qID}`);
-        inputField.value = "Mencari satelit...";
+        inputField.value = "Meminta izin dan mencari satelit...";
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     inputField.value = `${position.coords.latitude}, ${position.coords.longitude} (Acc: ${Math.round(position.coords.accuracy)}m)`;
                     inputField.style.backgroundColor = "#ecfdf5"; inputField.style.borderColor = "var(--success)";
                 },
-                function(error) { inputField.value = ""; alert("Gagal mengambil GPS. Pastikan GPS HP aktif."); },
+                function(error) { inputField.value = ""; alert("Akses GPS Gagal. Pastikan GPS HP menyala dan izin browser diberikan."); },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
-        } else { alert("GPS tidak didukung."); inputField.value = "Tidak Didukung"; }
+        } else { alert("Perangkat Anda tidak mendukung GPS."); inputField.value = "Tidak Didukung"; }
     }
 
     function evaluasiLogikaLompat() {
@@ -773,7 +847,7 @@
     }
 
     function bukaDaftarResponden() {
-        if (!activeProject || activeProject.data.length === 0) { alert("Belum ada data."); return; }
+        if (!activeProject || activeProject.data.length === 0) { alert("Belum ada data responden yang tersimpan."); return; }
         document.getElementById('inputCariEdit').value = '';
         renderListEdit();
         document.getElementById('modalEdit').style.display = 'block';
@@ -787,7 +861,7 @@
         for(let i = activeProject.data.length - 1; i >= startIndex; i--) {
             let row = activeProject.data[i];
             let btn = document.createElement('button');
-            btn.type = 'button'; btn.className = 'btn-outline'; btn.style.width = '100%'; btn.style.padding = '8px 4px'; btn.style.fontSize = '12px';
+            btn.type = 'button'; btn.className = 'btn-outline'; btn.style.width = '100%'; btn.style.padding = '10px 5px';
             btn.innerHTML = `ID: <strong>${row.ID_Responden}</strong>`;
             btn.onclick = () => muatDataEdit(i);
             container.appendChild(btn);
@@ -799,7 +873,7 @@
         if(targetID === "") return;
         let foundIndex = activeProject.data.findIndex(row => row.ID_Responden.toString() === targetID);
         if(foundIndex !== -1) { muatDataEdit(foundIndex); } 
-        else { alert(`ID ${targetID} tidak ditemukan!`); }
+        else { alert(`Data dengan ID ${targetID} tidak ditemukan!`); }
     }
 
     function tutupDaftarResponden() {
@@ -835,7 +909,7 @@
             }
         });
 
-        document.getElementById('btnSubmitData').innerHTML = "💾 Update Data";
+        document.getElementById('btnSubmitData').innerHTML = "💾 Update (Timpa) Data Responden";
         document.getElementById('btnSubmitData').className = "btn-warning btn-lg";
         document.getElementById('btnBatalEdit').style.display = 'block';
         document.getElementById('editWarning').style.display = 'block';
@@ -859,7 +933,7 @@
             document.getElementById('countData').innerText = activeProject.data.length;
         }
         
-        document.getElementById('btnSubmitData').innerHTML = "Kirim & Simpan Data 🚀";
+        document.getElementById('btnSubmitData').innerHTML = "Kirim & Simpan Data Baru 🚀";
         document.getElementById('btnSubmitData').className = "btn-success btn-lg";
         document.getElementById('btnBatalEdit').style.display = 'none';
         document.getElementById('editWarning').style.display = 'none';
@@ -875,7 +949,7 @@
                 const card = document.getElementById('card-' + q.id);
                 if(card.style.display !== 'none') {
                     const checkboxes = form.querySelectorAll(`input[name="${q.id}"]:checked`);
-                    if(checkboxes.length === 0) { alert(`Pertanyaan ${q.id.replace('Q','')} wajib diisi.`); isCheckboxValid = false; }
+                    if(checkboxes.length === 0) { alert(`Validasi Gagal: Pertanyaan ${q.id.replace('Q','')} wajib diisi.`); isCheckboxValid = false; }
                 }
             }
         });
@@ -895,10 +969,10 @@
 
         if (editIndex !== null) {
             activeProject.data[editIndex] = data;
-            alert(`✅ Data ID: ${data["ID_Responden"]} diperbarui!`);
+            alert(`✅ Data ID: ${data["ID_Responden"]} berhasil diperbarui/dikoreksi!`);
         } else {
             activeProject.data.push(data);
-            alert("✅ Data tersimpan offline!");
+            alert("✅ Data responden baru berhasil disimpan!");
         }
 
         activeProject.lastModified = new Date().toISOString();
@@ -909,7 +983,7 @@
 
     function unduhDataAdmin(id) {
         let proj = projects.find(p => p.id === id);
-        if(!proj || proj.data.length === 0) return alert("Database kosong.");
+        if(!proj || proj.data.length === 0) return alert("Database proyek ini masih kosong.");
         let headers = ["ID_Responden"];
         proj.schema.forEach(q => headers.push(q.varName));
         let csv = headers.join(",") + "\n";
