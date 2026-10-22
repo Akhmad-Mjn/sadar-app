@@ -355,10 +355,10 @@
 
             <div id="activeInputState" style="display: none; justify-content: center; gap: 12px; margin-top: 15px; align-items: center; flex-wrap: wrap;">
                 <span class="subtitle" id="statusBar" style="margin:0; font-size: 14px;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
-                <!-- Tombol dilindungi PIN Admin -->
+                <!-- Tombol dilindungi PIN Admin (Hanya untuk Supervisor) -->
                 <button type="button" class="btn-outline" style="padding: 8px 14px; font-size: 13px;" onclick="bukaDaftarResponden()" title="Butuh PIN Admin">🔒 Koreksi Data</button>
-                <!-- Tombol dilindungi PIN Admin -->
-                <button type="button" class="btn-dark" style="padding: 8px 14px; font-size: 13px;" onclick="exportProyekAktifLokal()" title="Butuh PIN Admin">🔒 Backup (.sadar)</button>
+                <!-- Tombol DIBUKA untuk Enumerator agar bisa Setor Data -->
+                <button type="button" class="btn-dark" style="padding: 8px 14px; font-size: 13px;" onclick="exportProyekAktif()">📤 Backup (.sadar)</button>
             </div>
         </div>
         
@@ -419,7 +419,7 @@
     }
 
     function gantiTemaWarna() {
-        if (!mintaAksesAdmin()) return; // Lindungi penggantian tema dengan PIN Admin
+        if (!mintaAksesAdmin()) return; 
         let current = localStorage.getItem('sadarThemeColor') || 'blue';
         let nextTheme = current === 'blue' ? 'green' : 'blue';
         localStorage.setItem('sadarThemeColor', nextTheme);
@@ -569,16 +569,14 @@
         link.download = `SADAR_${p.title.replace(/\s+/g, '_')}_${date}.sadar`; link.click();
     }
 
-    // Fungsi wrapper untuk mengekspor file dari dalam Mode Lapangan (Butuh PIN)
-    function exportProyekAktifLokal() {
-        if (!mintaAksesAdmin()) return;
-        
+    // Fungsi terbuka (tanpa PIN) untuk Enumerator mengekspor data lapangan
+    function exportProyekAktif() {
         if(!activeProject) return;
         let blob = new Blob([JSON.stringify(activeProject)], {type: "application/json"});
         let link = document.createElement("a"); link.href = URL.createObjectURL(blob);
         let date = new Date().toISOString().slice(0,10);
         link.download = `SADAR_Laporan_${activeProject.title.replace(/\s+/g, '_')}_${date}.sadar`; link.click();
-        alert("File .sadar berhasil diunduh. Kirimkan ke Admin Pusat.");
+        alert("File .sadar berhasil diunduh. Kirimkan file tersebut ke Admin Pusat melalui WhatsApp.");
     }
 
     function renderDashboard() {
@@ -845,7 +843,7 @@
         });
     }
 
-    // FUNGSI YANG DILINDUNGI RBAC (ROLE-BASED ACCESS CONTROL)
+    // FUNGSI KOREKSI DATA - DILINDUNGI RBAC (ROLE-BASED ACCESS CONTROL)
     function bukaDaftarResponden() {
         // PERLINDUNGAN: Hanya Admin yang bisa menembus barrier ini
         if (!mintaAksesAdmin()) return; 
