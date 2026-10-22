@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SADAR Pro - Enterprise Survey System</title>
+    <title>SADAR Pro - Dinkes Majene</title>
     
     <!-- PWA META -->
-    <meta name="theme-color" content="#4338ca">
+    <meta name="theme-color" id="metaThemeColor" content="#4338ca">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SADAR Pro">
@@ -17,18 +17,25 @@
 
     <style>
         :root {
+            /* Tema Biru Default (Bisa Diubah via JS) */
             --primary: #4338ca;      
             --primary-hover: #3730a3;
             --secondary: #0ea5e9;    
+            
+            /* Status Colors */
             --success: #10b981;      
             --success-hover: #059669;
             --danger: #ef4444;       
             --warning: #f59e0b;      
+            
+            /* Base Colors */
             --bg-color: #f3f4f6;     
             --card-bg: #ffffff;
             --text-main: #1f2937;    
             --text-muted: #6b7280;   
             --border: #e5e7eb;       
+            
+            /* Shadows & Radius */
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
@@ -162,7 +169,7 @@
         /* --- DASHBOARD --- */
         .dashboard-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
         .dashboard-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-        .dashboard-actions button { flex: 1; min-width: 120px; }
+        .dashboard-actions button { flex: 1; min-width: 100px; }
         
         .projects-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
         .project-card { 
@@ -190,7 +197,7 @@
             box-shadow: var(--shadow-sm); 
             transition: all 0.3s ease;
         }
-        .build-card:focus-within { border-color: #a5b4fc; box-shadow: var(--shadow-md); }
+        .build-card:focus-within { border-color: var(--primary); box-shadow: var(--shadow-md); }
         .build-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; }
         .q-id-badge { background: var(--bg-color); color: var(--text-muted); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
         
@@ -230,7 +237,7 @@
         .btn-gps { background: var(--card-bg); border: 2px solid var(--secondary); color: var(--secondary); font-weight: bold; padding: 14px; width: 100%; border-radius: var(--radius-md); }
         .btn-gps:hover { background: var(--secondary); color: white;}
         
-        .active-project-alert { background: #e0e7ff; color: #3730a3; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 20px; font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;}
+        .active-project-alert { background: var(--bg-color); color: var(--primary); padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 20px; font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid var(--primary);}
         
         #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 20px; align-items: center; justify-content: space-between; font-size: 14px; box-shadow: var(--shadow-md); }
 
@@ -244,55 +251,24 @@
             margin-top: 50px;
         }
 
-        /* =========================================================
-           RESPONSIVE DESKTOP OVERRIDES (Layar > 768px Laptop/PC)
-           ========================================================= */
+        /* RESPONSIVE DESKTOP OVERRIDES */
         @media (min-width: 768px) {
-            .nav-container { 
-                flex-direction: row; 
-                justify-content: space-between; 
-                padding: 15px 24px; 
-            }
-            .brand-container { 
-                align-items: flex-start; 
-                text-align: left; 
-                padding: 0; 
-            }
-            .tabs { 
-                width: auto; 
-                background: transparent; 
-                padding: 0; 
-                gap: 10px; 
-            }
-            .tab { 
-                padding: 10px 20px; 
-                background: var(--bg-color); 
-                border: 1px solid var(--border); 
-                font-size: 13px; 
-            }
-            .tab:hover { 
-                background: white; 
-                border-color: var(--primary); 
-                transform: translateY(-1px); 
-            }
-            .tab.active { 
-                border-color: var(--primary); 
-            }
-
+            .nav-container { flex-direction: row; justify-content: space-between; padding: 15px 24px; }
+            .brand-container { align-items: flex-start; text-align: left; padding: 0; }
+            .tabs { width: auto; background: transparent; padding: 0; gap: 10px; }
+            .tab { padding: 10px 20px; background: var(--bg-color); border: 1px solid var(--border); font-size: 13px; }
+            .tab:hover { background: white; border-color: var(--primary); transform: translateY(-1px); }
+            .tab.active { border-color: var(--primary); }
             .container { padding: 0 24px; margin: 30px auto; }
-            
             .dashboard-header { flex-direction: row; align-items: center; justify-content: space-between; margin-bottom: 30px; }
             .dashboard-actions { flex-wrap: nowrap; }
             .dashboard-actions button { min-width: 140px; }
-
             .projects-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
             .project-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-
             .grid-builder { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
             .logic-panel { display: flex; align-items: center; gap: 15px; }
             .logic-panel > label { margin-bottom: 0; min-width: 180px; }
             .logic-panel > div { flex: 1; margin: 0; }
-
             .q-card { padding: 30px; border-radius: 20px; }
             .q-title { font-size: 18px; }
         }
@@ -333,11 +309,12 @@
         <div class="dashboard-header">
             <div>
                 <h2>Workspace Admin</h2>
-                <span class="subtitle">Manajemen Proyek Survei & Ekspor Data.</span>
+                <span class="subtitle">Manajemen Proyek & Ekspor Data (Fitur Audit Aktif).</span>
             </div>
             <div class="dashboard-actions">
-                <button class="btn-outline" onclick="resetPin()">⚙️ Reset PIN</button>
-                <button class="btn-dark" onclick="klikImport()">📥 Import (.sadar)</button>
+                <button class="btn-outline" onclick="gantiTemaWarna()" title="Ubah Identitas Warna Instansi">🎨 Tema Instansi</button>
+                <button class="btn-outline" onclick="resetPin()">⚙️ PIN</button>
+                <button class="btn-dark" onclick="klikImport()">📥 Import</button>
                 <button class="btn-primary" onclick="buatProyekBaru()">+ Proyek Baru</button>
             </div>
         </div>
@@ -348,13 +325,13 @@
     <div id="builder" class="section">
         <div class="active-project-alert">
             <span id="lblActiveProjectDesign" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">📁 Proyek Aktif: -</span>
-            <button class="btn-outline" style="background: white; border-color: #c7d2fe; color: var(--primary); padding: 8px 14px;" onclick="switchTab('input')">Uji Lapangan ➔</button>
+            <button class="btn-primary" style="padding: 8px 14px;" onclick="switchTab('input')">Uji Lapangan ➔</button>
         </div>
         
         <div style="background: var(--card-bg); padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-top: 4px solid var(--primary);">
             <div class="input-group" style="margin: 0;">
                 <label>Judul Resmi Kuesioner:</label>
-                <input type="text" id="surveyTitle" placeholder="Misal: Survei Kinerja Layanan 2026" style="font-size: 18px; font-weight: bold;">
+                <input type="text" id="surveyTitle" placeholder="Misal: Survei Kinerja Layanan Dinkes 2026" style="font-size: 18px; font-weight: bold;">
             </div>
         </div>
 
@@ -402,7 +379,7 @@
                 <div class="q-title">ID Rekam Data (Sistem)</div>
                 <input type="number" id="id_responden" name="ID_Responden" readonly required>
                 <div id="editWarning" style="background: #fffbeb; color: #b45309; padding: 12px 16px; border-radius: 8px; border: 1px solid #fde68a; display:none; margin-top: 15px; font-weight: 600; font-size: 13px;">
-                    ⚠️ MODE KOREKSI AKTIF: Anda sedang mengubah data yang sudah tersimpan.
+                    ⚠️ MODE KOREKSI AKTIF: Anda sedang mengubah data yang sudah tersimpan. Jejak waktu audit akan diperbarui.
                 </div>
             </div>
 
@@ -418,13 +395,39 @@
     </div>
 </div>
 
-<!-- FOOTER INSTANSI -->
 <footer class="app-footer">
+    SADAR Enterprise Edition<br>
     Copyright &copy; 2026 Bidang Pelayanan dan SDK Dinkes Kab. Majene
 </footer>
 
 <script>
-    // --- INISIALISASI PWA YANG STABIL ---
+    // --- MANAJEMEN TEMA INSTANSI (WHITE-LABELING) ---
+    const THEMES = {
+        blue: { primary: '#4338ca', hover: '#3730a3', secondary: '#0ea5e9' },
+        green: { primary: '#059669', hover: '#047857', secondary: '#10b981' }
+    };
+    
+    function applyTemaTersimpan() {
+        let savedTheme = localStorage.getItem('sadarThemeColor') || 'blue';
+        let t = THEMES[savedTheme];
+        document.documentElement.style.setProperty('--primary', t.primary);
+        document.documentElement.style.setProperty('--primary-hover', t.hover);
+        document.documentElement.style.setProperty('--secondary', t.secondary);
+        document.getElementById('metaThemeColor').setAttribute('content', t.primary);
+    }
+
+    function gantiTemaWarna() {
+        let current = localStorage.getItem('sadarThemeColor') || 'blue';
+        let nextTheme = current === 'blue' ? 'green' : 'blue';
+        localStorage.setItem('sadarThemeColor', nextTheme);
+        applyTemaTersimpan();
+        alert(nextTheme === 'green' ? "✅ Tema diubah ke Hijau Medis (Dinkes)" : "✅ Tema diubah ke Biru Korporat (Default)");
+    }
+
+    // Terapkan tema sesaat sebelum halaman dirender sepenuhnya
+    applyTemaTersimpan();
+
+    // --- INISIALISASI PWA ---
     (() => {
         const manifest = {
             "name": "SADAR Pro Enterprise",
@@ -432,12 +435,8 @@
             "start_url": "./",
             "display": "standalone",
             "background_color": "#f3f4f6",
-            "theme_color": "#4338ca",
-            "icons": [{
-                "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png",
-                "sizes": "512x512",
-                "type": "image/png"
-            }]
+            "theme_color": "#059669",
+            "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png", "sizes": "512x512", "type": "image/png" }]
         };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
@@ -448,9 +447,7 @@
                     self.addEventListener('install', e => { self.skipWaiting(); });
                     self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
                     self.addEventListener('fetch', e => {
-                        e.respondWith(
-                            caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./')))
-                        );
+                        e.respondWith( caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./'))) );
                     });
                 `;
                 const swBlob = new Blob([swCode], {type: 'text/javascript'});
@@ -461,8 +458,7 @@
 
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
+        e.preventDefault(); deferredPrompt = e;
         document.getElementById('pwaInstallBanner').style.display = 'flex';
     });
 
@@ -470,12 +466,10 @@
         if (deferredPrompt) {
             deferredPrompt.prompt();
             let { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                document.getElementById('pwaInstallBanner').style.display = 'none';
-            }
+            if (outcome === 'accepted') document.getElementById('pwaInstallBanner').style.display = 'none';
             deferredPrompt = null;
         } else {
-            alert("Tips: Ketuk menu titik tiga (⋮) di pojok kanan atas browser Google Chrome Anda, lalu pilih 'Tambahkan ke Layar Utama' atau 'Install App'.");
+            alert("Gunakan menu browser 'Tambahkan ke Layar Utama' atau 'Install App'.");
         }
     });
 
@@ -495,9 +489,7 @@
                 appPin = setup.trim();
                 isAdminUnlocked = true; 
             } else {
-                alert("Wajib membuat PIN untuk melindungi Dashboard.");
-                location.reload();
-                return;
+                alert("Wajib membuat PIN untuk melindungi Dashboard."); location.reload(); return;
             }
         }
         renderDashboard();
@@ -552,7 +544,7 @@
                 if(!imported.id || !imported.schema) throw new Error();
                 let existingIdx = projects.findIndex(p => p.id === imported.id);
                 if(existingIdx !== -1) {
-                    if(confirm(`Proyek "${imported.title}" sudah ada di aplikasi ini.\n\nKlik OK untuk Update/Timpa data lama, atau Batal untuk menyimpannya sebagai salinan baru.`)) projects[existingIdx] = imported;
+                    if(confirm(`Proyek "${imported.title}" sudah ada di aplikasi ini.\n\nKlik OK untuk Update/Timpa, Batal untuk menyalin.`)) projects[existingIdx] = imported;
                     else { imported.id = 'PROJ_' + Date.now(); imported.title += " (Copy)"; projects.push(imported); }
                 } else { projects.push(imported); }
                 simpanKeLocalStorage(); event.target.value = '';
@@ -560,7 +552,7 @@
                 currentProjectId = imported.id; activeProject = projects.find(p => p.id === imported.id);
                 if(isAdminUnlocked) renderDashboard();
                 else { document.getElementById('displayTitle').innerText = activeProject.title; switchTab('input'); }
-            } catch(err) { alert("File yang Anda masukkan tidak valid atau rusak."); }
+            } catch(err) { alert("File tidak valid."); }
         };
         reader.readAsText(file);
     }
@@ -580,7 +572,7 @@
         let link = document.createElement("a"); link.href = URL.createObjectURL(blob);
         let date = new Date().toISOString().slice(0,10);
         link.download = `SADAR_Laporan_${activeProject.title.replace(/\s+/g, '_')}_${date}.sadar`; link.click();
-        alert("File laporan .sadar berhasil diunduh. Silakan kirim file tersebut ke Koordinator Anda.");
+        alert("File .sadar berhasil diunduh. Kirimkan ke Admin Pusat.");
     }
 
     function renderDashboard() {
@@ -746,16 +738,16 @@
             tempSchema.push({ id: qID, varName: qVar, text: qText, type: qType, required: qReq, options: optionsArray, logic: { parentId: lParent, requiredValue: lVal } });
         });
 
-        if (tempSchema.length === 0) return alert("Belum ada instrumen pertanyaan yang ditambahkan.");
-        if (!isValid) return alert("Simpan Dibatalkan: Pastikan teks pertanyaan & opsi pilihan tidak dibiarkan kosong.");
+        if (tempSchema.length === 0) return alert("Belum ada instrumen pertanyaan.");
+        if (!isValid) return alert("Pastikan teks pertanyaan & opsi tidak kosong.");
         if(activeProject.data.length > 0 && JSON.stringify(tempSchema.map(q=>q.id)) !== JSON.stringify(activeProject.schema.map(q=>q.id))) {
-            if(!confirm("⚠️ PERINGATAN STRUKTUR BERUBAH\nData lama di proyek ini tidak kompatibel dan akan dihapus. Lanjutkan?")) return;
+            if(!confirm("⚠️ PERINGATAN\nData lama tidak kompatibel dan akan dihapus. Lanjutkan?")) return;
             activeProject.data = [];
         }
 
         activeProject.schema = tempSchema; activeProject.title = newTitle; activeProject.lastModified = new Date().toISOString();
         simpanKeLocalStorage();
-        alert("Desain Kuesioner berhasil dikunci dan diterapkan ke Mode Lapangan!");
+        alert("Desain Kuesioner berhasil dikunci!");
         document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`;
         document.getElementById('displayTitle').innerText = activeProject.title;
     }
@@ -804,17 +796,17 @@
 
     function ambilLokasi(qID) {
         const inputField = document.getElementById(`gps-${qID}`);
-        inputField.value = "Meminta izin dan mencari satelit...";
+        inputField.value = "Mencari satelit...";
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     inputField.value = `${position.coords.latitude}, ${position.coords.longitude} (Acc: ${Math.round(position.coords.accuracy)}m)`;
                     inputField.style.backgroundColor = "#ecfdf5"; inputField.style.borderColor = "var(--success)";
                 },
-                function(error) { inputField.value = ""; alert("Akses GPS Gagal. Pastikan GPS HP menyala dan izin browser diberikan."); },
+                function(error) { inputField.value = ""; alert("Akses GPS Gagal."); },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
-        } else { alert("Perangkat Anda tidak mendukung GPS."); inputField.value = "Tidak Didukung"; }
+        } else { alert("Perangkat tidak mendukung GPS."); inputField.value = "Tidak Didukung"; }
     }
 
     function evaluasiLogikaLompat() {
@@ -848,7 +840,7 @@
     }
 
     function bukaDaftarResponden() {
-        if (!activeProject || activeProject.data.length === 0) { alert("Belum ada data responden yang tersimpan."); return; }
+        if (!activeProject || activeProject.data.length === 0) { alert("Belum ada data."); return; }
         document.getElementById('inputCariEdit').value = '';
         renderListEdit();
         document.getElementById('modalEdit').style.display = 'block';
@@ -873,8 +865,7 @@
         let targetID = document.getElementById('inputCariEdit').value.trim();
         if(targetID === "") return;
         let foundIndex = activeProject.data.findIndex(row => row.ID_Responden.toString() === targetID);
-        if(foundIndex !== -1) { muatDataEdit(foundIndex); } 
-        else { alert(`Data dengan ID ${targetID} tidak ditemukan!`); }
+        if(foundIndex !== -1) { muatDataEdit(foundIndex); } else { alert(`Data ID ${targetID} tidak ditemukan!`); }
     }
 
     function tutupDaftarResponden() {
@@ -910,24 +901,19 @@
             }
         });
 
-        document.getElementById('btnSubmitData').innerHTML = "💾 Update (Timpa) Data Responden";
+        document.getElementById('btnSubmitData').innerHTML = "💾 Update (Timpa) Data";
         document.getElementById('btnSubmitData').className = "btn-warning btn-lg";
         document.getElementById('btnBatalEdit').style.display = 'block';
         document.getElementById('editWarning').style.display = 'block';
         document.getElementById('core-id').style.borderLeftColor = "var(--warning)";
 
-        tutupDaftarResponden();
-        evaluasiLogikaLompat();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        tutupDaftarResponden(); evaluasiLogikaLompat(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function batalEdit() {
         editIndex = null; 
-        let form = document.getElementById('dataForm');
-        form.reset();
-        form.querySelectorAll('input[id^="gps-"]').forEach(inp => {
-            inp.style.backgroundColor = ""; inp.style.borderColor = "";
-        });
+        let form = document.getElementById('dataForm'); form.reset();
+        form.querySelectorAll('input[id^="gps-"]').forEach(inp => { inp.style.backgroundColor = ""; inp.style.borderColor = ""; });
 
         if(activeProject) {
             document.getElementById('id_responden').value = activeProject.data.length + 1;
@@ -968,25 +954,33 @@
             else { data[q.id] = ""; }
         });
 
+        // --- SISTEM AUDIT TRAIL ENTERPRISE (TERSEMBUNYI) ---
+        let currentDateTime = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Makassar' }); // Waktu lokal Indonesia Tengah
+        data["_Audit_Timestamp"] = currentDateTime;
+        data["_Audit_Device"] = navigator.userAgent;
+
         if (editIndex !== null) {
-            activeProject.data[editIndex] = data;
-            alert(`✅ Data ID: ${data["ID_Responden"]} berhasil diperbarui/dikoreksi!`);
+            data["_Audit_Update_Timestamp"] = currentDateTime; // Menandai kapan data diedit
+            activeProject.data[editIndex] = Object.assign(activeProject.data[editIndex], data);
+            alert(`✅ Data ID: ${data["ID_Responden"]} berhasil dikoreksi!`);
         } else {
             activeProject.data.push(data);
             alert("✅ Data responden baru berhasil disimpan!");
         }
 
         activeProject.lastModified = new Date().toISOString();
-        simpanKeLocalStorage();
-        batalEdit(); 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        simpanKeLocalStorage(); batalEdit(); window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function unduhDataAdmin(id) {
         let proj = projects.find(p => p.id === id);
         if(!proj || proj.data.length === 0) return alert("Database proyek ini masih kosong.");
+        
+        // Header Standar + Header Audit Trail
         let headers = ["ID_Responden"];
         proj.schema.forEach(q => headers.push(q.varName));
+        headers.push("_Audit_Timestamp", "_Audit_Update_Timestamp", "_Audit_Device"); // Audit hanya muncul di Excel
+        
         let csv = headers.join(",") + "\n";
         
         proj.data.forEach(row => {
@@ -995,13 +989,19 @@
                 let val = row[q.id] || "";
                 rowArray.push(`"${val.toString().replace(/"/g, '""')}"`);
             });
+            
+            // Masukkan data Audit ke Excel
+            rowArray.push(`"${(row["_Audit_Timestamp"] || "").toString()}"`);
+            rowArray.push(`"${(row["_Audit_Update_Timestamp"] || "").toString()}"`);
+            rowArray.push(`"${(row["_Audit_Device"] || "").toString().replace(/"/g, '""')}"`);
+
             csv += rowArray.join(",") + "\n";
         });
 
         const link = document.createElement("a");
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         link.href = URL.createObjectURL(blob);
-        link.download = `SADAR_CSV_${proj.title.replace(/\s+/g, '_')}.csv`;
+        link.download = `SADAR_Lengkap_${proj.title.replace(/\s+/g, '_')}.csv`;
         link.click();
     }
 </script>
