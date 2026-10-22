@@ -312,7 +312,7 @@
                 <span class="subtitle">Manajemen Proyek & Ekspor Data (Fitur Audit Aktif).</span>
             </div>
             <div class="dashboard-actions">
-                <button class="btn-outline" onclick="gantiTemaWarna()" title="Ubah Identitas Warna Instansi">🎨 Tema</button>
+                <button class="btn-outline" onclick="gantiTemaWarna()" title="Ubah Identitas Warna Instansi">🎨 Tema Instansi</button>
                 <button class="btn-outline" onclick="resetPin()">⚙️ PIN</button>
                 <button class="btn-dark" onclick="klikImport()">📥 Import</button>
                 <button class="btn-primary" onclick="buatProyekBaru()">+ Proyek Baru</button>
@@ -343,7 +343,7 @@
         </div>
     </div>
 
-    <!-- MODE INPUT -->
+    <!-- MODE INPUT (Dengan Perlindungan RBAC) -->
     <div id="input" class="section">
         <div class="survey-header">
             <h2 id="displayTitle">Sistem Siaga (Standby)</h2>
@@ -355,8 +355,10 @@
 
             <div id="activeInputState" style="display: none; justify-content: center; gap: 12px; margin-top: 15px; align-items: center; flex-wrap: wrap;">
                 <span class="subtitle" id="statusBar" style="margin:0; font-size: 14px;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
-                <button type="button" class="btn-outline" style="padding: 8px 14px; font-size: 13px;" onclick="bukaDaftarResponden()">🔍 Cari / Koreksi Data</button>
-                <button type="button" class="btn-dark" style="padding: 8px 14px; font-size: 13px;" onclick="exportProyekAktif()">📤 Backup File (.sadar)</button>
+                <!-- Tombol dilindungi PIN Admin -->
+                <button type="button" class="btn-outline" style="padding: 8px 14px; font-size: 13px;" onclick="bukaDaftarResponden()" title="Butuh PIN Admin">🔒 Koreksi Data</button>
+                <!-- Tombol dilindungi PIN Admin -->
+                <button type="button" class="btn-dark" style="padding: 8px 14px; font-size: 13px;" onclick="exportProyekAktifLokal()" title="Butuh PIN Admin">🔒 Backup (.sadar)</button>
             </div>
         </div>
         
@@ -401,7 +403,7 @@
 </footer>
 
 <script>
-    // --- MANAJEMEN TEMA (WHITE-LABELING) ---
+    // --- MANAJEMEN TEMA INSTANSI (WHITE-LABELING) ---
     const THEMES = {
         blue: { primary: '#4338ca', hover: '#3730a3', secondary: '#0ea5e9' },
         green: { primary: '#059669', hover: '#047857', secondary: '#10b981' }
@@ -417,6 +419,7 @@
     }
 
     function gantiTemaWarna() {
+        if (!mintaAksesAdmin()) return; // Lindungi penggantian tema dengan PIN Admin
         let current = localStorage.getItem('sadarThemeColor') || 'blue';
         let nextTheme = current === 'blue' ? 'green' : 'blue';
         localStorage.setItem('sadarThemeColor', nextTheme);
@@ -502,7 +505,7 @@
         if (isAdminUnlocked) return true;
         let inputPin = prompt("🔒 Masukkan PIN Admin:");
         if (inputPin === appPin) { isAdminUnlocked = true; return true; }
-        else { if(inputPin !== null) alert("PIN Salah!"); return false; }
+        else { if(inputPin !== null) alert("PIN Salah! Anda tidak memiliki akses."); return false; }
     }
 
     function switchTab(tabId) {
@@ -566,7 +569,10 @@
         link.download = `SADAR_${p.title.replace(/\s+/g, '_')}_${date}.sadar`; link.click();
     }
 
-    function exportProyekAktif() {
+    // Fungsi wrapper untuk mengekspor file dari dalam Mode Lapangan (Butuh PIN)
+    function exportProyekAktifLokal() {
+        if (!mintaAksesAdmin()) return;
+        
         if(!activeProject) return;
         let blob = new Blob([JSON.stringify(activeProject)], {type: "application/json"});
         let link = document.createElement("a"); link.href = URL.createObjectURL(blob);
@@ -839,7 +845,11 @@
         });
     }
 
+    // FUNGSI YANG DILINDUNGI RBAC (ROLE-BASED ACCESS CONTROL)
     function bukaDaftarResponden() {
+        // PERLINDUNGAN: Hanya Admin yang bisa menembus barrier ini
+        if (!mintaAksesAdmin()) return; 
+
         if (!activeProject || activeProject.data.length === 0) { alert("Belum ada data."); return; }
         document.getElementById('inputCariEdit').value = '';
         renderListEdit();
@@ -955,7 +965,7 @@
         });
 
         // --- SISTEM AUDIT TRAIL ENTERPRISE (TERSEMBUNYI) ---
-        let currentDateTime = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Makassar' }); // Waktu lokal Indonesia Tengah
+        let currentDateTime = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Makassar' }); 
         data["_Audit_Timestamp"] = currentDateTime;
         data["_Audit_Device"] = navigator.userAgent;
 
@@ -976,10 +986,9 @@
         let proj = projects.find(p => p.id === id);
         if(!proj || proj.data.length === 0) return alert("Database proyek ini masih kosong.");
         
-        // Header Standar + Header Audit Trail
         let headers = ["ID_Responden"];
         proj.schema.forEach(q => headers.push(q.varName));
-        headers.push("_Audit_Timestamp", "_Audit_Update_Timestamp", "_Audit_Device"); // Audit hanya muncul di Excel
+        headers.push("_Audit_Timestamp", "_Audit_Update_Timestamp", "_Audit_Device"); 
         
         let csv = headers.join(",") + "\n";
         
@@ -990,7 +999,6 @@
                 rowArray.push(`"${val.toString().replace(/"/g, '""')}"`);
             });
             
-            // Masukkan data Audit ke Excel
             rowArray.push(`"${(row["_Audit_Timestamp"] || "").toString()}"`);
             rowArray.push(`"${(row["_Audit_Update_Timestamp"] || "").toString()}"`);
             rowArray.push(`"${(row["_Audit_Device"] || "").toString().replace(/"/g, '""')}"`);
