@@ -186,17 +186,9 @@
         </div>
         
         <div style="background: var(--card-bg); padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-top: 4px solid var(--primary);">
-            <div class="input-group" style="margin-bottom: 15px;">
+            <div class="input-group" style="margin: 0;">
                 <label>Judul Resmi Kuesioner:</label>
                 <input type="text" id="surveyTitle" placeholder="Misal: Survei Kinerja Layanan Dinkes 2026" style="font-size: 18px; font-weight: bold;">
-            </div>
-            <div style="border-top: 1px solid var(--border); padding-top: 15px;">
-                <label class="req-toggle">
-                    <input type="checkbox" id="cfgAutoNumber" checked> Gunakan Penomoran Otomatis Sistem (1, 2, 3...)
-                </label>
-                <small style="display: block; color: var(--text-muted); font-size: 12px; margin-top: 4px;">
-                    *Matikan centang ini jika teks pertanyaan di CSV/kuesioner sudah memiliki nomor sendiri (misal: C.1, D.4) agar tidak terjadi nomor ganda.
-                </small>
             </div>
         </div>
 
@@ -418,7 +410,6 @@
 
     function loadBuilderUI() {
         document.getElementById('surveyTitle').value = activeProject.title;
-        document.getElementById('cfgAutoNumber').checked = activeProject.autoNumbering !== false;
         document.getElementById('questionsContainer').innerHTML = '';
         if(activeProject.schema.length > 0) {
             activeProject.schema.forEach(q => {
@@ -454,30 +445,55 @@
             let content = e.target.result;
             let separator = content.indexOf(';') > -1 ? ';' : ','; // Deteksi otomatis separator PC
             let lines = content.split(/\r\n|\n/);
-            let tempSchema = [];
+            let rawRows = [];
             
             for(let i=1; i<lines.length; i++) {
-                if(lines[i].trim() === "") continue;
-                let cols = lines[i].split(separator);
+                let line = lines[i].trim();
+                if(line === "") continue;
+                let cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 if(cols.length >= 3) {
-                    let qID = "Q" + (tempSchema.length + 1);
-                    let qVar = (cols[0] || qID).replace(/"/g, '').trim();
-                    let qText = (cols[1] || "").replace(/"/g, '').trim();
-                    let qType = (cols[2] || "text").replace(/"/g, '').trim().toLowerCase();
-                    let qReq = (cols[3] || "").toLowerCase().includes('ya') || (cols[3] || "").toLowerCase().includes('true');
-                    
-                    // Opsi jawaban dari CSV dipisah dengan Pipa | lalu kita masukkan array
-                    let qOptsStr = (cols[4] || "").replace(/"/g, '').trim();
-                    let qOpts = qOptsStr !== "" ? qOptsStr.split('|').map(o=>o.trim()).filter(o=>o!=="") : [];
-                    
-                    if(qText !== "") {
-                        tempSchema.push({ id: qID, varName: qVar, text: qText, type: qType, required: qReq, options: qOpts, logic: { parentId: '', requiredValue: '' } });
-                    }
+                    rawRows.push({
+                        varName: (cols[0] || "").replace(/^"|"$/g, '').trim(),
+                        text: (cols[1] || "").replace(/^"|"$/g, '').trim(),
+                        type: (cols[2] || "text").replace(/^"|"$/g, '').trim().toLowerCase(),
+                        req: (cols[3] || "").toLowerCase().includes('ya') || (cols[3] || "").toLowerCase().includes('true'),
+                        optsStr: (cols[4] || "").replace(/^"|"$/g, '').trim(),
+                        indukLogic: cols[5] ? cols[5].replace(/^"|"$/g, '').trim().toUpperCase() : '',
+                        targetVal: cols[6] ? cols[6].replace(/^"|"$/g, '').trim() : ''
+                    });
                 }
             }
+
+            let tempSchema = [];
+            rawRows.forEach((r, idx) => {
+                let qID = "Q" + (idx + 1);
+                let qVar = r.varName !== "" ? r.varName : qID;
+                let qOpts = r.optsStr !== "" ? r.optsStr.split('|').map(o=>o.trim()).filter(o=>o!=="") : [];
+                tempSchema.push({
+                    id: qID,
+                    varName: qVar,
+                    text: r.text,
+                    type: r.type,
+                    required: r.req,
+                    options: qOpts,
+                    logic: { parentId: '', requiredValue: r.targetVal, rawInduk: r.indukLogic }
+                });
+            });
+
+            // Map rawInduk (e.g. 'C3' or 'Q3') to actual question ID (e.g. 'Q3')
+            tempSchema.forEach(q => {
+                if(q.logic.rawInduk) {
+                    let parentQ = tempSchema.find(p => p.varName.toUpperCase() === q.logic.rawInduk || p.id.toUpperCase() === q.logic.rawInduk);
+                    if(parentQ) {
+                        q.logic.parentId = parentQ.id;
+                    }
+                }
+                delete q.logic.rawInduk;
+            });
+
             if(tempSchema.length > 0) {
                 activeProject.schema = tempSchema; simpanKeLocalStorage(); loadBuilderUI();
-                alert(`✅ Berhasil merakit ${tempSchema.length} pertanyaan dari file CSV! (Pastikan Anda klik 'Simpan & Terapkan' setelah ini)`);
+                alert(`✅ Berhasil merakit ${tempSchema.length} pertanyaan lengkap dengan Skip Logic dari file CSV! (Pastikan Anda klik 'Simpan & Terapkan' setelah ini)`);
             } else { alert("❌ File kosong atau format salah."); }
             event.target.value = '';
         };
@@ -485,8 +501,7 @@
     }
 
     function saveKuesionerSchema() {
-        let tempSchema = []; let newTitle = document.getElementById('surveyTitle').value || "Proyek Tanpa Judul"; 
-        let autoNum = document.getElementById('cfgAutoNumber').checked; let isValid = true;
+        let tempSchema = []; let newTitle = document.getElementById('surveyTitle').value || "Proyek Tanpa Judul"; let isValid = true;
         document.querySelectorAll('#questionsContainer .build-card').forEach((card, index) => {
             let qID = "Q" + (index + 1); let qVar = card.querySelector('.q-var').value.trim() || qID; let qText = card.querySelector('.q-text').value; let qType = card.querySelector('.q-type').value; let qReq = card.querySelector('.q-req-box').checked; let qOpts = card.querySelector('.q-opt-val').value; let lParent = card.querySelector('.logic-parent').value.trim().toUpperCase(); let lVal = card.querySelector('.logic-val').value.trim();
             if(qText.trim() === "") isValid = false;
@@ -496,17 +511,15 @@
         });
         if (tempSchema.length === 0) return alert("Belum ada instrumen pertanyaan."); if (!isValid) return alert("Pastikan teks pertanyaan & opsi tidak kosong.");
         if(activeProject.data.length > 0 && JSON.stringify(tempSchema.map(q=>q.id)) !== JSON.stringify(activeProject.schema.map(q=>q.id))) { if(!confirm("⚠️ PERINGATAN\nData lama tidak kompatibel dan akan dihapus. Lanjutkan?")) return; activeProject.data = []; }
-        activeProject.schema = tempSchema; activeProject.title = newTitle; activeProject.autoNumbering = autoNum; activeProject.lastModified = new Date().toISOString(); simpanKeLocalStorage(); alert("Desain Kuesioner berhasil dikunci!"); document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`; document.getElementById('displayTitle').innerText = activeProject.title;
+        activeProject.schema = tempSchema; activeProject.title = newTitle; activeProject.lastModified = new Date().toISOString(); simpanKeLocalStorage(); alert("Desain Kuesioner berhasil dikunci!"); document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`; document.getElementById('displayTitle').innerText = activeProject.title;
     }
 
     function renderForm() {
         if(!activeProject || activeProject.schema.length === 0) return;
         batalEdit(); const container = document.getElementById('dynamicFormContainer'); container.innerHTML = '';
-        let isAutoNumber = activeProject.autoNumbering !== false;
         activeProject.schema.forEach((q, index) => {
             let reqMark = q.required ? '<span class="req-star">*</span>' : ''; let reqAttr = q.required ? 'required' : '';
-            let nomorPrefix = isAutoNumber ? (index + 1) + '. ' : '';
-            let html = `<div class="q-card" id="card-${q.id}" data-parent="${q.logic.parentId}" data-reqval="${q.logic.requiredValue}"><div class="q-title">${nomorPrefix}${q.text} ${reqMark}</div>`;
+            let html = `<div class="q-card" id="card-${q.id}" data-parent="${q.logic.parentId}" data-reqval="${q.logic.requiredValue}"><div class="q-title">${index + 1}. ${q.text} ${reqMark}</div>`;
             if (q.type === 'text') { html += `<input type="text" name="${q.id}" ${reqAttr} placeholder="Ketik jawaban Anda...">`; } 
             else if (q.type === 'textarea') { html += `<textarea name="${q.id}" rows="3" ${reqAttr} placeholder="Jelaskan secara detail..."></textarea>`; }
             else if (q.type === 'number') { html += `<input type="number" name="${q.id}" ${reqAttr} placeholder="0">`; } 
