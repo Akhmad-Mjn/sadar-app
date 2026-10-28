@@ -186,9 +186,17 @@
         </div>
         
         <div style="background: var(--card-bg); padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border-top: 4px solid var(--primary);">
-            <div class="input-group" style="margin: 0;">
+            <div class="input-group" style="margin-bottom: 15px;">
                 <label>Judul Resmi Kuesioner:</label>
                 <input type="text" id="surveyTitle" placeholder="Misal: Survei Kinerja Layanan Dinkes 2026" style="font-size: 18px; font-weight: bold;">
+            </div>
+            <div style="border-top: 1px solid var(--border); padding-top: 15px;">
+                <label class="req-toggle">
+                    <input type="checkbox" id="cfgAutoNumber" checked> Gunakan Penomoran Otomatis Sistem (1, 2, 3...)
+                </label>
+                <small style="display: block; color: var(--text-muted); font-size: 12px; margin-top: 4px;">
+                    *Matikan centang ini jika teks pertanyaan di CSV/kuesioner sudah memiliki nomor sendiri (misal: C.1, D.4) agar tidak terjadi nomor ganda.
+                </small>
             </div>
         </div>
 
@@ -410,6 +418,7 @@
 
     function loadBuilderUI() {
         document.getElementById('surveyTitle').value = activeProject.title;
+        document.getElementById('cfgAutoNumber').checked = activeProject.autoNumbering !== false;
         document.getElementById('questionsContainer').innerHTML = '';
         if(activeProject.schema.length > 0) {
             activeProject.schema.forEach(q => {
@@ -501,7 +510,8 @@
     }
 
     function saveKuesionerSchema() {
-        let tempSchema = []; let newTitle = document.getElementById('surveyTitle').value || "Proyek Tanpa Judul"; let isValid = true;
+        let tempSchema = []; let newTitle = document.getElementById('surveyTitle').value || "Proyek Tanpa Judul"; 
+        let autoNum = document.getElementById('cfgAutoNumber').checked; let isValid = true;
         document.querySelectorAll('#questionsContainer .build-card').forEach((card, index) => {
             let qID = "Q" + (index + 1); let qVar = card.querySelector('.q-var').value.trim() || qID; let qText = card.querySelector('.q-text').value; let qType = card.querySelector('.q-type').value; let qReq = card.querySelector('.q-req-box').checked; let qOpts = card.querySelector('.q-opt-val').value; let lParent = card.querySelector('.logic-parent').value.trim().toUpperCase(); let lVal = card.querySelector('.logic-val').value.trim();
             if(qText.trim() === "") isValid = false;
@@ -511,15 +521,17 @@
         });
         if (tempSchema.length === 0) return alert("Belum ada instrumen pertanyaan."); if (!isValid) return alert("Pastikan teks pertanyaan & opsi tidak kosong.");
         if(activeProject.data.length > 0 && JSON.stringify(tempSchema.map(q=>q.id)) !== JSON.stringify(activeProject.schema.map(q=>q.id))) { if(!confirm("⚠️ PERINGATAN\nData lama tidak kompatibel dan akan dihapus. Lanjutkan?")) return; activeProject.data = []; }
-        activeProject.schema = tempSchema; activeProject.title = newTitle; activeProject.lastModified = new Date().toISOString(); simpanKeLocalStorage(); alert("Desain Kuesioner berhasil dikunci!"); document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`; document.getElementById('displayTitle').innerText = activeProject.title;
+        activeProject.schema = tempSchema; activeProject.title = newTitle; activeProject.autoNumbering = autoNum; activeProject.lastModified = new Date().toISOString(); simpanKeLocalStorage(); alert("Desain Kuesioner berhasil dikunci!"); document.getElementById('lblActiveProjectDesign').innerHTML = `📁 Proyek Aktif: <strong>${activeProject.title}</strong>`; document.getElementById('displayTitle').innerText = activeProject.title;
     }
 
     function renderForm() {
         if(!activeProject || activeProject.schema.length === 0) return;
         batalEdit(); const container = document.getElementById('dynamicFormContainer'); container.innerHTML = '';
+        let isAutoNumber = activeProject.autoNumbering !== false;
         activeProject.schema.forEach((q, index) => {
             let reqMark = q.required ? '<span class="req-star">*</span>' : ''; let reqAttr = q.required ? 'required' : '';
-            let html = `<div class="q-card" id="card-${q.id}" data-parent="${q.logic.parentId}" data-reqval="${q.logic.requiredValue}"><div class="q-title">${index + 1}. ${q.text} ${reqMark}</div>`;
+            let nomorPrefix = isAutoNumber ? (index + 1) + '. ' : '';
+            let html = `<div class="q-card" id="card-${q.id}" data-parent="${q.logic.parentId}" data-reqval="${q.logic.requiredValue}"><div class="q-title">${nomorPrefix}${q.text} ${reqMark}</div>`;
             if (q.type === 'text') { html += `<input type="text" name="${q.id}" ${reqAttr} placeholder="Ketik jawaban Anda...">`; } 
             else if (q.type === 'textarea') { html += `<textarea name="${q.id}" rows="3" ${reqAttr} placeholder="Jelaskan secara detail..."></textarea>`; }
             else if (q.type === 'number') { html += `<input type="number" name="${q.id}" ${reqAttr} placeholder="0">`; } 
