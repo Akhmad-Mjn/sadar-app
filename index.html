@@ -564,7 +564,7 @@ Data lama tidak kompatibel dan akan dihapus. Lanjutkan?")) return; activeProject
     }
 
 
-    // FUNGSI BARU: Evaluasi Logika Matematika (>=, <=, >, <)
+    // FUNGSI BARU (V9.6): Evaluasi Logika Anti-Substansi (Fix konflik angka seperti '0-5')
     function checkCondition(actualValue, targetValue) {
         if (actualValue === undefined || actualValue === null || actualValue === "") return false;
         
@@ -580,8 +580,13 @@ Data lama tidak kompatibel dan akan dihapus. Lanjutkan?")) return; activeProject
         } else if (targetValue.startsWith("<")) {
             return parseFloat(actualValue) < parseFloat(targetValue.replace("<", "").trim());
         } else {
-            return actualValue.toLowerCase() === targetValue.toLowerCase() || 
-                   actualValue.toLowerCase().includes(targetValue.toLowerCase());
+            let lowerActual = actualValue.toLowerCase();
+            let lowerTarget = targetValue.toLowerCase();
+            if (lowerActual === lowerTarget) return true;
+            if (lowerActual.startsWith(lowerTarget + "=") || lowerActual.startsWith(lowerTarget + " ") || lowerActual.startsWith(lowerTarget + "-")) return true;
+            // Jika target bukan angka (misal: "Ya"), gunakan includes aman
+            if (isNaN(targetValue) && lowerActual.includes(lowerTarget)) return true;
+            return false;
         }
     }
 
