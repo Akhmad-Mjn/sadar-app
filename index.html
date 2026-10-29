@@ -549,14 +549,48 @@
         if (navigator.geolocation) { navigator.geolocation.getCurrentPosition( function(position) { inputField.value = `${position.coords.latitude}, ${position.coords.longitude} (Acc: ${Math.round(position.coords.accuracy)}m)`; inputField.style.backgroundColor = "#ecfdf5"; inputField.style.borderColor = "var(--success)"; }, function(error) { inputField.value = ""; alert("Akses GPS Gagal."); }, { enableHighAccuracy: true, timeout: 10000 } ); } else { alert("Perangkat tidak mendukung GPS."); inputField.value = "Tidak Didukung"; }
     }
 
+    function checkCondition(actualValue, targetValue) {
+        if (actualValue === undefined || actualValue === null || actualValue === "") return false;
+        actualValue = String(actualValue).trim();
+        targetValue = String(targetValue).trim();
+        if (targetValue.startsWith(">=")) {
+            return parseFloat(actualValue) >= parseFloat(targetValue.replace(">=", "").trim());
+        } else if (targetValue.startsWith("<=")) {
+            return parseFloat(actualValue) <= parseFloat(targetValue.replace("<=", "").trim());
+        } else if (targetValue.startsWith(">")) {
+            return parseFloat(actualValue) > parseFloat(targetValue.replace(">", "").trim());
+        } else if (targetValue.startsWith("<")) {
+            return parseFloat(actualValue) < parseFloat(targetValue.replace("<", "").trim());
+        } else {
+            let lowerActual = actualValue.toLowerCase();
+            let lowerTarget = targetValue.toLowerCase();
+            if (lowerActual === lowerTarget) return true;
+            if (lowerActual.startsWith(lowerTarget + "=") || lowerActual.startsWith(lowerTarget + " ") || lowerActual.startsWith(lowerTarget + "-")) return true;
+            if (isNaN(targetValue) && lowerActual.includes(lowerTarget)) return true;
+            return false;
+        }
+    }
+
     function evaluasiLogikaLompat() {
         if(!activeProject || activeProject.schema.length === 0) return; const form = document.getElementById('dataForm'); const formData = new FormData(form);
         document.querySelectorAll('.q-card').forEach(card => {
             if(card.id === 'core-id') return; let parentId = card.getAttribute('data-parent'); let reqValue = card.getAttribute('data-reqval');
             if (parentId && reqValue) {
                 let actualValue = formData.getAll(parentId).join("; ");
-                if (actualValue.toLowerCase().includes(reqValue.toLowerCase())) { card.style.display = 'block'; let qData = activeProject.schema.find(q => q.id === card.id.replace('card-','')); if(qData && qData.required) { card.querySelectorAll('input, select, textarea').forEach(inp => { if(inp.type !== 'checkbox') inp.required = true; }); } } 
-                else { card.style.display = 'none'; card.querySelectorAll('input, select, textarea').forEach(inp => { inp.required = false; if(inp.type === 'radio' || inp.type === 'checkbox') inp.checked = false; else inp.value = ""; }); }
+                let isMatch = checkCondition(actualValue, reqValue);
+                if (isMatch) { 
+                    card.style.display = 'block'; 
+                    let qData = activeProject.schema.find(q => q.id === card.id.replace('card-','')); 
+                    if(qData && qData.required) { 
+                        card.querySelectorAll('input, select, textarea').forEach(inp => { if(inp.type !== 'checkbox') inp.required = true; }); 
+                    } 
+                } else { 
+                    card.style.display = 'none'; 
+                    card.querySelectorAll('input, select, textarea').forEach(inp => { 
+                        inp.required = false; 
+                        if(inp.type === 'radio' || inp.type === 'checkbox') inp.checked = false; else inp.value = ""; 
+                    }); 
+                }
             }
         });
     }
