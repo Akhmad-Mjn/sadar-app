@@ -616,9 +616,7 @@ Data lama tidak kompatibel dan akan dihapus. Lanjutkan?")) return; activeProject
             }
         });
     }
-            }
-        });
-    }
+
 
     function bukaDaftarResponden() { if (!mintaAksesAdmin()) return; if (!activeProject || activeProject.data.length === 0) { alert("Belum ada data."); return; } document.getElementById('inputCariEdit').value = ''; renderListEdit(); document.getElementById('modalEdit').style.display = 'block'; document.getElementById('dataForm').style.display = 'none'; }
     function renderListEdit() { const container = document.getElementById('listEditContainer'); container.innerHTML = ''; let startIndex = Math.max(0, activeProject.data.length - 15); for(let i = activeProject.data.length - 1; i >= startIndex; i--) { let row = activeProject.data[i]; let btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn-outline'; btn.style.width = '100%'; btn.style.padding = '10px 5px'; btn.innerHTML = `<strong>${row.ID_Responden}</strong>`; btn.onclick = () => muatDataEdit(i); container.appendChild(btn); } }
