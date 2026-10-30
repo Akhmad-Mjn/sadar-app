@@ -393,7 +393,7 @@
         projects.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
         projects.forEach(p => {
             const dateStr = new Date(p.lastModified).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
-            container.innerHTML += `<div class="project-card"><div class="project-info"><h3>${p.title}</h3><div class="project-meta"><span>🕒 ${dateStr}</span><span style="color:var(--primary); font-weight:bold;">👥 ${p.data.length} Data</span></div></div><div class="project-actions"><button class="btn-outline" onclick="bukaProyek('${p.id}')">✏️ Buka</button><button class="btn-dark" onclick="exportProyekSpesifik('${p.id}')">📤 .sadar</button><button class="btn-success" onclick="unduhDataAdmin('${p.id}')">📊 Excel</button><button class="btn-danger" style="flex:0.3; min-width:40px;" onclick="hapusProyek('${p.id}')">🗑️</button></div></div>`;
+            container.innerHTML += `<div class="project-card"><div class="project-info"><h3>${p.title}</h3><div class="project-meta"><span>🕒 ${dateStr}</span><span style="color:var(--primary); font-weight:bold;">👥 ${p.data.length} Data</span></div></div><div class="project-actions"><button class="btn-outline" onclick="bukaProyek('${p.id}')">✏️ Buka</button><button class="btn-dark" onclick="exportProyekSpesifik('${p.id}')">📤 .sadar</button><button class="btn-success" onclick="unduhDataAdmin(\'${p.id}\')">📥 CSV</button><button class="btn-primary" style="background:#25D366; box-shadow: var(--shadow-sm);" onclick="bagikanDataAdmin(\'${p.id}\')">📲 WA/Drive</button><button class="btn-danger" style="flex:0.3; min-width:40px;" onclick="hapusProyek('${p.id}')">🗑️</button></div></div>`;
         });
     }
 
@@ -642,6 +642,37 @@
         });
         const link = document.createElement("a"); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); link.href = URL.createObjectURL(blob); link.download = `SADAR_Lengkap_${proj.title.replace(/\s+/g, '_')}.csv`; link.click();
     }
+
+    async function bagikanDataAdmin(id) {
+        let proj = projects.find(p => p.id === id); if(!proj || proj.data.length === 0) return alert("Database proyek ini masih kosong.");
+        let headers = ["ID_Responden"]; proj.schema.forEach(q => headers.push(q.varName)); headers.push("_Audit_Timestamp", "_Audit_Update_Timestamp", "_Audit_Device"); 
+        let csv = headers.join(",") + "\n";
+        proj.data.forEach(row => {
+            let rowArray = [`"${(row["ID_Responden"] || "").toString().replace(/"/g, '""')}"`];
+            proj.schema.forEach(q => { let val = row[q.id] || ""; rowArray.push(`"${val.toString().replace(/"/g, '""')}"`); });
+            rowArray.push(`"${(row["_Audit_Timestamp"] || "").toString()}"`); rowArray.push(`"${(row["_Audit_Update_Timestamp"] || "").toString()}"`); rowArray.push(`"${(row["_Audit_Device"] || "").toString().replace(/"/g, '""')}"`);
+            csv += rowArray.join(",") + "\n";
+        });
+        
+        const fileName = `Data_SADAR_${proj.title.replace(/\s+/g, '_')}.csv`;
+        const file = new File([csv], fileName, { type: 'text/csv' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    title: 'Data Survei SADAR',
+                    text: `Berikut adalah lampiran file data CSV dari survei: ${proj.title}.`,
+                    files: [file]
+                });
+            } catch (error) {
+                if (error.name !== 'AbortError') alert("Gagal membagikan file via sistem. Anda bisa menyimpannya secara manual.");
+            }
+        } else {
+            alert("Fitur Share langsung (Kirim ke WA/Drive) tidak didukung di browser ini atau sedang dalam mode offline/file lokal. File akan diunduh otomatis.");
+            unduhDataAdmin(id);
+        }
+    }
+
 </script>
 
 </body>
