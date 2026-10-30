@@ -571,7 +571,68 @@
         }
     }
 
+    
+    const majeneWilayah = {
+        "BANGGAE": ["Barane", "Labuang", "Baurung", "Pangali-ali", "Tande", "Rangas", "Buttu Barane"],
+        "BANGGAE TIMUR": ["Lembang", "Tanassang", "Passewang", "Totoli", "Tande Barat", "Buttu Camba", "Kampung Baru"],
+        "PAMBOANG": ["Pamboang", "Batu Pute", "Banua Adolang", "Adolang Olora", "Bonde", "Bababulo", "Tallu Banua", "Sirindu", "Ulidang", "Tinambung"],
+        "SENDANA": ["Sendana", "Paminggalan", "Binanga", "Bukit Samang", "Luar", "Leppangan", "Petoang", "Totolisi", "Girimulia"],
+        "MALUNDA": ["Malunda", "Lumu", "Malleallang", "Kayu Alo", "Uhaimate", "Popanga", "Sandana", "Salutambung"],
+        "ULUMANDA": ["Ulumanda", "Karema", "Popenga", "Tandeallo", "Kabiraan", "Salubanga"],
+        "TAMMERODO SENDANA": ["Tammerodo", "Tallu Bamba", "Tuburan", "Ulidang", "Mala", "Banua Sendana"],
+        "TUBO SENDANA": ["Tubo", "Lombe", "Tubo Selatan", "Tubo Tengah", "Tubo Utara"]
+    };
+
+    function updateCascadingDropdowns() {
+        const form = document.getElementById('dataForm');
+        if(!form) return;
+        
+        // Find all select elements in the form
+        const selects = form.querySelectorAll('select');
+        selects.forEach(sel => {
+            let qId = sel.name;
+            let qSchema = activeProject.schema.find(q => q.id === qId);
+            if(!qSchema) return;
+            
+            let varName = (qSchema.varName || "").toLowerCase();
+            if(varName.includes('desa') || varName.includes('kelurahan') || varName.includes('desakel')) {
+                // Find potential kecamatan parent in schema
+                let kecQuestion = activeProject.schema.find(q => {
+                    let v = (q.varName || "").toLowerCase();
+                    return v.includes('kecamatan') || v.includes('kec');
+                });
+                
+                if(kecQuestion) {
+                    let kecSelect = form.querySelector(`select[name="${kecQuestion.id}"]`);
+                    if(kecSelect) {
+                        let selectedKec = kecSelect.value.trim().toUpperCase();
+                        // Remove prefix if any (e.g., "1=Banggae" -> "Banggae")
+                        for(let key in majeneWilayah) {
+                            if(selectedKec.includes(key)) {
+                                selectedKec = key;
+                                break;
+                            }
+                        }
+                        
+                        let currentVal = sel.value;
+                        sel.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
+                        if(majeneWilayah[selectedKec]) {
+                            majeneWilayah[selectedKec].forEach(desa => {
+                                let opt = document.createElement('option');
+                                opt.value = desa;
+                                opt.innerText = desa;
+                                if(desa === currentVal) opt.selected = true;
+                                sel.appendChild(opt);
+                            });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     function evaluasiLogikaLompat() {
+        updateCascadingDropdowns();
         if(!activeProject || activeProject.schema.length === 0) return; const form = document.getElementById('dataForm'); const formData = new FormData(form);
         document.querySelectorAll('.q-card').forEach(card => {
             if(card.id === 'core-id') return; let parentId = card.getAttribute('data-parent'); let reqValue = card.getAttribute('data-reqval');
