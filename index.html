@@ -572,6 +572,7 @@
     }
 
     
+    
     const majeneWilayah = {
         "BANGGAE": ["Barane", "Labuang", "Baurung", "Pangali-ali", "Tande", "Rangas", "Buttu Barane"],
         "BANGGAE TIMUR": ["Lembang", "Tanassang", "Passewang", "Totoli", "Tande Barat", "Buttu Camba", "Kampung Baru"],
@@ -587,7 +588,6 @@
         const form = document.getElementById('dataForm');
         if(!form) return;
         
-        // Find all select elements in the form
         const selects = form.querySelectorAll('select');
         selects.forEach(sel => {
             let qId = sel.name;
@@ -596,7 +596,6 @@
             
             let varName = (qSchema.varName || "").toLowerCase();
             if(varName.includes('desa') || varName.includes('kelurahan') || varName.includes('desakel')) {
-                // Find potential kecamatan parent in schema
                 let kecQuestion = activeProject.schema.find(q => {
                     let v = (q.varName || "").toLowerCase();
                     return v.includes('kecamatan') || v.includes('kec');
@@ -605,19 +604,25 @@
                 if(kecQuestion) {
                     let kecSelect = form.querySelector(`select[name="${kecQuestion.id}"]`);
                     if(kecSelect) {
-                        let selectedKec = kecSelect.value.trim().toUpperCase();
-                        // Remove prefix if any (e.g., "1=Banggae" -> "Banggae")
-                        for(let key in majeneWilayah) {
-                            if(selectedKec.includes(key)) {
-                                selectedKec = key;
+                        let rawKec = kecSelect.value.trim().toUpperCase();
+                        // Remove potential numeric prefixes like "1=" or "1. "
+                        let cleanKec = rawKec.replace(/^[0-9]+[\.\=\-\s]+/, "").trim();
+                        
+                        let matchedKey = "";
+                        // Sort keys by length descending to match longer keys first (e.g. "BANGGAE TIMUR" before "BANGGAE")
+                        let sortedKeys = Object.keys(majeneWilayah).sort((a, b) => b.length - a.length);
+                        
+                        for(let key of sortedKeys) {
+                            if(cleanKec === key || cleanKec.includes(key)) {
+                                matchedKey = key;
                                 break;
                             }
                         }
                         
                         let currentVal = sel.value;
                         sel.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
-                        if(majeneWilayah[selectedKec]) {
-                            majeneWilayah[selectedKec].forEach(desa => {
+                        if(matchedKey && majeneWilayah[matchedKey]) {
+                            majeneWilayah[matchedKey].forEach(desa => {
                                 let opt = document.createElement('option');
                                 opt.value = desa;
                                 opt.innerText = desa;
@@ -630,6 +635,7 @@
             }
         });
     }
+
 
     function evaluasiLogikaLompat() {
         updateCascadingDropdowns();
