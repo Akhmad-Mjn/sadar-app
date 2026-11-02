@@ -302,7 +302,10 @@
         document.documentElement.style.setProperty('--primary', t.primary);
         document.documentElement.style.setProperty('--primary-hover', t.hover);
         document.documentElement.style.setProperty('--secondary', t.secondary);
-        document.getElementById('metaThemeColor').setAttribute('content', t.primary);
+        
+        let metaTag = document.getElementById('metaThemeColor');
+        if(metaTag) metaTag.setAttribute('content', t.primary);
+        
         updateManifestTheme(t.primary);
     }
 
@@ -314,6 +317,8 @@
         applyTemaTersimpan();
         alert(nextTheme === 'green' ? "✅ Tema diubah ke Hijau Medis (Dinkes)" : "✅ Tema diubah ke Biru Korporat (Default)");
     }
+    
+    // Langsung terapkan tema dari awal eksekusi
     applyTemaTersimpan();
 
     if ('serviceWorker' in navigator) {
