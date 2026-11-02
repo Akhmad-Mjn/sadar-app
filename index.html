@@ -9,7 +9,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SADAR Pro">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1533/1533913.png">
+    <!-- Custom Professional Icon for SADAR Pro -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%234338ca'/><path d='M256 70 L390 130 V250 C390 340 256 430 256 430 C256 430 122 340 122 250 V130 Z' fill='%23059669'/><path d='M220 170 H292 V220 H342 V292 H292 V342 H220 V292 H170 V220 H220 Z' fill='%23ffffff'/><path d='M200 290 L240 330 L320 230' stroke='%234338ca' stroke-width='32' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%234338ca'/><path d='M256 70 L390 130 V250 C390 340 256 430 256 430 C256 430 122 340 122 250 V130 Z' fill='%23059669'/><path d='M220 170 H292 V220 H342 V292 H292 V342 H220 V292 H170 V220 H220 Z' fill='%23ffffff'/><path d='M200 290 L240 330 L320 230' stroke='%234338ca' stroke-width='32' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
     <link rel="manifest" id="dynamicManifest">
 
     <style>
@@ -294,7 +296,7 @@
     applyTemaTersimpan();
 
     (() => {
-        const manifest = { "name": "SADAR Pro", "short_name": "SADAR", "start_url": "./", "display": "standalone", "background_color": "#f3f4f6", "theme_color": "#059669", "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png", "sizes": "512x512", "type": "image/png" }] };
+        const manifest = { "name": "SADAR Pro", "short_name": "SADAR", "start_url": "./", "display": "standalone", "background_color": "#f3f4f6", "theme_color": "#059669", "icons": [{ "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%234338ca'/><path d='M256 70 L390 130 V250 C390 340 256 430 256 430 C256 430 122 340 122 250 V130 Z' fill='%23059669'/><path d='M220 170 H292 V220 H342 V292 H292 V342 H220 V292 H170 V220 H220 Z' fill='%23ffffff'/><path d='M200 290 L240 330 L320 230' stroke='%234338ca' stroke-width='32' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>", "sizes": "512x512", "type": "image/svg+xml" }] };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
         if ('serviceWorker' in navigator) {
