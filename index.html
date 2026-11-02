@@ -219,10 +219,17 @@
                 <button class="btn-dark btn-lg" style="width: auto;" onclick="klikImport()">📥 Load File (.sadar)</button>
             </div>
 
-            <div id="activeInputState" style="display: none; justify-content: center; gap: 12px; margin-top: 15px; align-items: center; flex-wrap: wrap;">
-                <span class="subtitle" id="statusBar" style="margin:0; font-size: 14px;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
-                <button type="button" class="btn-outline" style="padding: 8px 14px; font-size: 13px;" onclick="bukaDaftarResponden()" title="Butuh PIN Admin">🔒 Koreksi Data</button>
-                <button type="button" class="btn-dark" style="padding: 8px 14px; font-size: 13px;" onclick="exportProyekAktif()">📤 Backup (.sadar)</button>
+            <div id="activeInputState" style="display: none; flex-direction: column; align-items: center; gap: 12px; margin-top: 15px;">
+                <div style="display: flex; align-items: center; gap: 8px; background: white; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); width: 100%; max-width: 400px;">
+                    <span style="font-size: 13px; font-weight: bold; color: var(--text-muted); white-space: nowrap;">📁 Proyek:</span>
+                    <select id="selectActiveProjectInput" onchange="gantiProyekCepat(this.value)" style="border: none; background: transparent; padding: 4px; font-weight: bold; color: var(--primary); font-size: 14px; outline: none; cursor: pointer; width: 100%;">
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%;">
+                    <span class="subtitle" id="statusBar" style="margin:0; font-size: 13px;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
+                    <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="bukaDaftarResponden()" title="Butuh PIN Admin">🔒 Koreksi Data</button>
+                    <button type="button" class="btn-dark" style="padding: 6px 12px; font-size: 12px;" onclick="exportProyekAktif()">📤 Backup (.sadar)</button>
+                </div>
             </div>
         </div>
         
@@ -314,17 +321,46 @@
     if(!deviceCode) { deviceCode = Math.random().toString(36).substring(2, 6).toUpperCase(); localStorage.setItem('sadarDevCode', deviceCode); }
 
     window.onload = function() {
+        // Mode Bebas: Enum tidak perlu set PIN di awal
         if (!appPin) {
-            let setup = prompt("🚀 INISIALISASI SADAR PWA\n\nBuat PIN Keamanan Admin (Angka):");
-            if (setup && setup.trim() !== "") { localStorage.setItem('sadarPin4', setup.trim()); appPin = setup.trim(); isAdminUnlocked = true; } 
-            else { alert("Wajib membuat PIN."); location.reload(); return; }
+            localStorage.setItem('sadarPin4', 'DINKESMAJENE');
+            appPin = 'DINKESMAJENE';
         }
-        renderDashboard();
+        // Jika ada proyek aktif, langsung arahkan ke tab Lapangan secara otomatis
+        if (currentProjectId || projects.length > 0) {
+            if(!currentProjectId) { currentProjectId = projects[0].id; activeProject = projects[0]; }
+            switchTab('input');
+        } else {
+            renderDashboard();
+        }
     }
 
     function simpanKeLocalStorage() { localStorage.setItem('sadarProjectsV4', JSON.stringify(projects)); }
     function resetPin() { if(confirm("Reset PIN? Akses akan ditutup hingga PIN baru dibuat.")) { localStorage.removeItem('sadarPin4'); location.reload(); } }
     function mintaAksesAdmin() { if (isAdminUnlocked) return true; let inputPin = prompt("🔒 Masukkan PIN Admin:\n\n*Tips: Jika lupa, masukkan Master Key"); if (inputPin === appPin) { isAdminUnlocked = true; return true; } else if (inputPin === "DINKESMAJENE") { let newPin = prompt("🔑 MASTER KEY DITERIMA.\n\nSilakan buat PIN Admin baru (Angka):"); if (newPin && newPin.trim() !== "") { localStorage.setItem('sadarPin4', newPin.trim()); appPin = newPin.trim(); isAdminUnlocked = true; alert("✅ PIN berhasil direset tanpa menghapus data proyek!"); return true; } else { alert("Pembuatan PIN dibatalkan."); return false; } } else { if(inputPin !== null) alert("PIN Salah!"); return false; } }
+
+    
+    function updateSelectActiveProjectInput() {
+        let sel = document.getElementById('selectActiveProjectInput');
+        if(!sel) return;
+        sel.innerHTML = '';
+        if(projects.length === 0) return;
+        projects.forEach(p => {
+            let opt = document.createElement('option');
+            opt.value = p.id;
+            opt.innerText = p.title;
+            if(p.id === currentProjectId) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    function gantiProyekCepat(id) {
+        currentProjectId = id;
+        activeProject = projects.find(p => p.id === id);
+        document.getElementById('displayTitle').innerText = activeProject.title;
+        renderForm();
+        evaluasiLogikaLompat();
+    }
 
     function switchTab(tabId) {
         if(tabId === 'dashboard' || tabId === 'builder') { if (!mintaAksesAdmin()) return; }
@@ -336,6 +372,7 @@
 
         if(tabId === 'builder' && currentProjectId) loadBuilderUI();
         if(tabId === 'input') {
+            updateSelectActiveProjectInput();
             if(currentProjectId) { document.getElementById('emptyInputState').style.display = 'none'; document.getElementById('activeInputState').style.display = 'flex'; document.getElementById('dataForm').style.display = 'block'; renderForm(); evaluasiLogikaLompat(); } 
             else { document.getElementById('emptyInputState').style.display = 'block'; document.getElementById('activeInputState').style.display = 'none'; document.getElementById('dataForm').style.display = 'none'; document.getElementById('displayTitle').innerText = "Sistem Siaga (Standby)"; }
         }
