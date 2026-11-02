@@ -278,6 +278,24 @@
 
 <script>
     const THEMES = { blue: { primary: '#4338ca', hover: '#3730a3', secondary: '#0ea5e9' }, green: { primary: '#059669', hover: '#047857', secondary: '#10b981' } };
+    
+    function updateManifestTheme(colorHex) {
+        const manifest = { 
+            "name": "SADAR Pro", 
+            "short_name": "SADAR", 
+            "start_url": "./", 
+            "display": "standalone", 
+            "background_color": "#f3f4f6", 
+            "theme_color": colorHex, 
+            "icons": [
+                { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+                { "src": "icon.svg", "sizes": "512x512", "type": "image/svg+xml" }
+            ] 
+        };
+        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+        document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
+    }
+
     function applyTemaTersimpan() {
         let savedTheme = localStorage.getItem('sadarThemeColor') || 'blue';
         let t = THEMES[savedTheme];
@@ -285,6 +303,7 @@
         document.documentElement.style.setProperty('--primary-hover', t.hover);
         document.documentElement.style.setProperty('--secondary', t.secondary);
         document.getElementById('metaThemeColor').setAttribute('content', t.primary);
+        updateManifestTheme(t.primary);
     }
 
     function gantiTemaWarna() {
@@ -297,29 +316,13 @@
     }
     applyTemaTersimpan();
 
-    (() => {
-        const manifest = { 
-            "name": "SADAR Pro", 
-            "short_name": "SADAR", 
-            "start_url": "./", 
-            "display": "standalone", 
-            "background_color": "#f3f4f6", 
-            "theme_color": "#059669", 
-            "icons": [
-                { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-                { "src": "icon.svg", "sizes": "512x512", "type": "image/svg+xml" }
-            ] 
-        };
-        const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-        document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('activate', e => e.waitUntil(clients.claim())); self.addEventListener('fetch', e => e.respondWith( caches.match(e.request).then(c => c || fetch(e.request).catch(() => caches.match('./'))) ));`;
-                const swBlob = new Blob([swCode], {type: 'text/javascript'});
-                navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
-            });
-        }
-    })();
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swCode = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('activate', e => e.waitUntil(clients.claim())); self.addEventListener('fetch', e => e.respondWith( caches.match(e.request).then(c => c || fetch(e.request).catch(() => caches.match('./'))) ));`;
+            const swBlob = new Blob([swCode], {type: 'text/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+        });
+    }
 
     let deferredPrompt;
     const installBanner = document.getElementById('pwaInstallBanner');
@@ -377,7 +380,7 @@
     
     function resetPin() {
         let inputOld = prompt("⚙️ UBAH / RESET PIN ADMIN\n\nMasukkan PIN Admin saat ini (atau Master Key 'DINKESMAJENE'):");
-        if (inputOld === null) return; // Batal
+        if (inputOld === null) return;
         
         if (inputOld === appPin || inputOld === "DINKESMAJENE") {
             let newPin = prompt("🔑 DIVERIFIKASI.\n\nMasukkan PIN Admin baru yang Anda inginkan:");
