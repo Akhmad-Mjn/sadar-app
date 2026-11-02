@@ -374,7 +374,26 @@
     }
 
     function simpanKeLocalStorage() { localStorage.setItem('sadarProjectsV4', JSON.stringify(projects)); }
-    function resetPin() { if(confirm("Reset PIN? Akses akan ditutup hingga PIN baru dibuat.")) { localStorage.removeItem('sadarPin4'); location.reload(); } }
+    
+    function resetPin() {
+        let inputOld = prompt("⚙️ UBAH / RESET PIN ADMIN\n\nMasukkan PIN Admin saat ini (atau Master Key 'DINKESMAJENE'):");
+        if (inputOld === null) return; // Batal
+        
+        if (inputOld === appPin || inputOld === "DINKESMAJENE") {
+            let newPin = prompt("🔑 DIVERIFIKASI.\n\nMasukkan PIN Admin baru yang Anda inginkan:");
+            if (newPin && newPin.trim() !== "") {
+                localStorage.setItem('sadarPin4', newPin.trim());
+                appPin = newPin.trim();
+                isAdminUnlocked = true;
+                alert("✅ PIN Admin berhasil diperbarui menjadi: " + appPin);
+            } else {
+                alert("Pembaruan PIN dibatalkan. PIN tidak boleh kosong.");
+            }
+        } else {
+            alert("❌ PIN atau Master Key yang Anda masukkan salah.");
+        }
+    }
+
     function mintaAksesAdmin() { 
         if (isAdminUnlocked) return true; 
         let inputPin = prompt("🔒 Masukkan PIN Admin:\n\n*Tips: Jika lupa, masukkan Master Key"); 
