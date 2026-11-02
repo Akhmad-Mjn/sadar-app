@@ -472,7 +472,25 @@
 
     function hapusProyek(id) {
         let pName = projects.find(p => p.id === id).title;
-        if(confirm(`Yakin ingin menghapus permanen proyek "${pName}" beserta semua datanya?`)) { projects = projects.filter(p => p.id !== id); if(currentProjectId === id) { currentProjectId = null; activeProject = null; } simpanKeLocalStorage(); renderDashboard(); }
+        if(confirm(`Yakin ingin menghapus permanen proyek "${pName}" beserta semua datanya?`)) { 
+            projects = projects.filter(p => p.id !== id); 
+            if(currentProjectId === id) { 
+                currentProjectId = projects.length > 0 ? projects[0].id : null; 
+                activeProject = projects.length > 0 ? projects[0] : null; 
+            } 
+            simpanKeLocalStorage(); 
+            renderDashboard(); 
+            updateSelectActiveProjectInput();
+            if (currentProjectId) {
+                renderForm();
+                evaluasiLogikaLompat();
+            } else {
+                document.getElementById('emptyInputState').style.display = 'block';
+                document.getElementById('activeInputState').style.display = 'none';
+                document.getElementById('dataForm').style.display = 'none';
+                document.getElementById('displayTitle').innerText = "Sistem Siaga (Standby)";
+            }
+        }
     }
 
     function updateLabels() { document.querySelectorAll('#questionsContainer .build-card').forEach((card, index) => { card.querySelector('.q-id-badge').innerText = "KODE: Q" + (index + 1); }); }
