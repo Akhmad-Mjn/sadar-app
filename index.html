@@ -337,7 +337,31 @@
 
     function simpanKeLocalStorage() { localStorage.setItem('sadarProjectsV4', JSON.stringify(projects)); }
     function resetPin() { if(confirm("Reset PIN? Akses akan ditutup hingga PIN baru dibuat.")) { localStorage.removeItem('sadarPin4'); location.reload(); } }
-    function mintaAksesAdmin() { if (isAdminUnlocked) return true; let inputPin = prompt("🔒 Masukkan PIN Admin:\n\n*Tips: Jika lupa, masukkan Master Key"); if (inputPin === appPin) { isAdminUnlocked = true; return true; } else if (inputPin === "DINKESMAJENE") { let newPin = prompt("🔑 MASTER KEY DITERIMA.\n\nSilakan buat PIN Admin baru (Angka):"); if (newPin && newPin.trim() !== "") { localStorage.setItem('sadarPin4', newPin.trim()); appPin = newPin.trim(); isAdminUnlocked = true; alert("✅ PIN berhasil direset tanpa menghapus data proyek!"); return true; } else { alert("Pembuatan PIN dibatalkan."); return false; } } else { if(inputPin !== null) alert("PIN Salah!"); return false; } }
+    function mintaAksesAdmin() { 
+        if (isAdminUnlocked) return true; 
+        let inputPin = prompt("🔒 Masukkan PIN Admin:\n\n*Tips: Jika lupa, masukkan Master Key"); 
+        if (inputPin === appPin) { 
+            isAdminUnlocked = true; 
+            renderDashboard(); 
+            return true; 
+        } else if (inputPin === "DINKESMAJENE") { 
+            let newPin = prompt("🔑 MASTER KEY DITERIMA.\n\nSilakan buat PIN Admin baru (Angka):"); 
+            if (newPin && newPin.trim() !== "") { 
+                localStorage.setItem('sadarPin4', newPin.trim()); 
+                appPin = newPin.trim(); 
+                isAdminUnlocked = true; 
+                renderDashboard(); 
+                alert("✅ PIN berhasil direset tanpa menghapus data proyek!"); 
+                return true; 
+            } else { 
+                alert("Pembuatan PIN dibatalkan."); 
+                return false; 
+            } 
+        } else { 
+            if(inputPin !== null) alert("PIN Salah!"); 
+            return false; 
+        } 
+    }
 
     
     function updateSelectActiveProjectInput() {
