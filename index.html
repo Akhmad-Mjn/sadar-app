@@ -654,7 +654,11 @@
             else if (q.type === 'textarea') { html += `<textarea name="${q.id}" rows="3" ${reqAttr} placeholder="Jelaskan secara detail..."></textarea>`; }
             else if (q.type === 'number') { html += `<input type="number" name="${q.id}" ${reqAttr} placeholder="0">`; } 
             else if (q.type === 'date') { html += `<input type="date" name="${q.id}" ${reqAttr}>`; }
-            else if (q.type === 'dropdown') { html += `<select name="${q.id}" ${reqAttr}><option value="">-- Silakan Pilih Opsi --</option>`; q.options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; }); html += `</select>`; }
+            else if (q.type === 'dropdown') { 
+                html += `<select name="${q.id}" ${reqAttr}><option value="" disabled selected hidden>-- Silakan Pilih Opsi --</option>`; 
+                q.options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; }); 
+                html += `</select>`; 
+            }
             else if (q.type === 'radio') { html += `<div class="options-list">`; q.options.forEach(opt => { html += `<label><input type="radio" name="${q.id}" value="${opt}" ${reqAttr}> <span>${opt}</span></label>`; }); html += `</div>`; }
             else if (q.type === 'checkbox') { html += `<div class="options-list">`; q.options.forEach(opt => { html += `<label><input type="checkbox" name="${q.id}" value="${opt}"> <span>${opt}</span></label>`; }); html += `</div>`; }
             else if (q.type === 'gps') { html += `<button type="button" class="btn-gps" onclick="ambilLokasi('${q.id}')">📍 Sinkronisasi Satelit Lokasi</button><input type="text" id="gps-${q.id}" name="${q.id}" readonly placeholder="Koordinat belum direkam" ${reqAttr} style="margin-top:10px;">`; }
@@ -734,7 +738,7 @@
                         }
                         
                         let currentVal = sel.value;
-                        sel.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
+                        sel.innerHTML = '<option value="" disabled selected hidden>-- Pilih Desa / Kelurahan --</option>';
                         if(matchedKey && majeneWilayah[matchedKey]) {
                             majeneWilayah[matchedKey].forEach(desa => {
                                 let opt = document.createElement('option');
