@@ -9,9 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SADAR Pro">
-    <!-- Physical Icon References (Fixes Chrome WebAPK badge bug) -->
-    <link rel="alternate icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1533/1533913.png">
     <link rel="manifest" id="dynamicManifest">
 
     <style>
@@ -296,17 +294,7 @@
     applyTemaTersimpan();
 
     (() => {
-        const manifest = { 
-            "name": "SADAR Pro", 
-            "short_name": "SADAR", 
-            "start_url": "./", 
-            "display": "standalone", 
-            "background_color": "#f3f4f6", 
-            "theme_color": "#059669", 
-            "icons": [
-                { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-                ] 
-        };
+        const manifest = { "name": "SADAR Pro", "short_name": "SADAR", "start_url": "./", "display": "standalone", "background_color": "#f3f4f6", "theme_color": "#059669", "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png", "sizes": "512x512", "type": "image/png" }] };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
         if ('serviceWorker' in navigator) {
@@ -319,38 +307,8 @@
     })();
 
     let deferredPrompt;
-    const installBanner = document.getElementById('pwaInstallBanner');
-    const btnInstall = document.getElementById('btnInstallPWA');
-
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        installBanner.style.display = 'none';
-    } else {
-        installBanner.style.display = 'flex';
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBanner.style.display = 'flex';
-    });
-
-    btnInstall.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            let { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installBanner.style.display = 'none';
-            }
-            deferredPrompt = null;
-        } else {
-            alert("📌 CARA MEMASANG SADAR PRO:
-
-1. Tekan tombol titik tiga (⋮) di kanan atas Google Chrome.
-2. Pilih 'Tambahkan ke Layar Utama' (Add to Home Screen).
-
-Aplikasi akan terpasang otomatis di HP Anda dengan ikon resmi SADAR Pro!");
-        }
-    }); let { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') document.getElementById('pwaInstallBanner').style.display = 'none'; deferredPrompt = null; } else { alert("Gunakan menu browser 'Tambahkan ke Layar Utama'."); } });
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('pwaInstallBanner').style.display = 'flex'; });
+    document.getElementById('btnInstallPWA').addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); let { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') document.getElementById('pwaInstallBanner').style.display = 'none'; deferredPrompt = null; } else { alert("Gunakan menu browser 'Tambahkan ke Layar Utama'."); } });
 
     let appPin = localStorage.getItem('sadarPin4');
     let isAdminUnlocked = false;
