@@ -9,14 +9,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SADAR Pro">
-    
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%234338ca'/><path d='M256 60 L390 120 V240 C390 340 256 430 256 430 C256 430 122 340 122 240 V120 Z' fill='%23059669'/><path d='M226 150 H286 V210 H346 V270 H286 V330 H226 V270 H166 V210 H226 Z' fill='%23ffffff'/><path d='M190 270 L230 310 L320 210' stroke='%234338ca' stroke-width='36' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%234338ca'/><path d='M256 60 L390 120 V240 C390 340 256 430 256 430 C256 430 122 340 122 240 V120 Z' fill='%23059669'/><path d='M226 150 H286 V210 H346 V270 H286 V330 H226 V270 H166 V210 H226 Z' fill='%23ffffff'/><path d='M190 270 L230 310 L320 210' stroke='%234338ca' stroke-width='36' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1533/1533913.png">
     <link rel="manifest" id="dynamicManifest">
 
     <style>
         :root {
-            --primary: #4338ca; --primary-hover: #3730a3; --secondary: #0ea5e9;    
+            var(--primary): #4338ca; --primary-hover: #3730a3; --secondary: #0ea5e9;    
             --success: #10b981; --success-hover: #059669; --danger: #ef4444; --warning: #f59e0b;      
             --bg-color: #f3f4f6; --card-bg: #ffffff; --text-main: #1f2937; --text-muted: #6b7280;   
             --border: #e5e7eb; --shadow-sm: 0 1px 2px rgba(0,0,0,0.05); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
@@ -107,7 +105,7 @@
         
         .active-project-alert { background: var(--bg-color); color: var(--primary); padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 20px; font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid var(--primary);}
         
-        #pwaInstallBanner { display: flex; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 20px; align-items: center; justify-content: space-between; font-size: 14px; box-shadow: var(--shadow-md); }
+        #pwaInstallBanner { display: none; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 20px; align-items: center; justify-content: space-between; font-size: 14px; box-shadow: var(--shadow-md); }
 
         .app-footer { text-align: center; padding: 24px 15px; font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border); background: var(--card-bg); margin-top: 50px; }
 
@@ -295,10 +293,8 @@
     }
     applyTemaTersimpan();
 
-    const svgIconData = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='110' fill='%234338ca'/><path d='M256 60 L390 120 V240 C390 340 256 430 256 430 C256 430 122 340 122 240 V120 Z' fill='%23059669'/><path d='M226 150 H286 V210 H346 V270 H286 V330 H226 V270 H166 V210 H226 Z' fill='%23ffffff'/><path d='M190 270 L230 310 L320 210' stroke='%234338ca' stroke-width='36' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>";
-
     (() => {
-        const manifest = { "name": "SADAR Pro", "short_name": "SADAR", "start_url": "./", "display": "standalone", "background_color": "#f3f4f6", "theme_color": "#059669", "icons": [{ "src": svgIconData, "sizes": "512x512", "type": "image/svg+xml" }] };
+        const manifest = { "name": "SADAR Pro", "short_name": "SADAR", "start_url": "./", "display": "standalone", "background_color": "#f3f4f6", "theme_color": "#059669", "icons": [{ "src": "https://cdn-icons-png.flaticon.com/512/1533/1533913.png", "sizes": "512x512", "type": "image/png" }] };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
         if ('serviceWorker' in navigator) {
@@ -311,33 +307,8 @@
     })();
 
     let deferredPrompt;
-    const installBanner = document.getElementById('pwaInstallBanner');
-    const btnInstall = document.getElementById('btnInstallPWA');
-
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        installBanner.style.display = 'none';
-    } else {
-        installBanner.style.display = 'flex';
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBanner.style.display = 'flex';
-    });
-
-    btnInstall.addEventListener('click', async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            let { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installBanner.style.display = 'none';
-            }
-            deferredPrompt = null;
-        } else {
-            alert("📌 CARA MEMASANG SADAR PRO:\n\n1. Tekan tombol titik tiga (⋮) di kanan atas Google Chrome.\n2. Pilih 'Tambahkan ke Layar Utama' (Add to Home Screen).\n\nAplikasi akan terpasang otomatis di HP Anda dengan ikon resmi SADAR Pro!");
-        }
-    });
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('pwaInstallBanner').style.display = 'flex'; });
+    document.getElementById('btnInstallPWA').addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); let { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') document.getElementById('pwaInstallBanner').style.display = 'none'; deferredPrompt = null; } else { alert("Gunakan menu browser 'Tambahkan ke Layar Utama'."); } });
 
     let appPin = localStorage.getItem('sadarPin4');
     let isAdminUnlocked = false;
@@ -350,10 +321,12 @@
     if(!deviceCode) { deviceCode = Math.random().toString(36).substring(2, 6).toUpperCase(); localStorage.setItem('sadarDevCode', deviceCode); }
 
     window.onload = function() {
+        // Mode Bebas: Enum tidak perlu set PIN di awal
         if (!appPin) {
             localStorage.setItem('sadarPin4', 'DINKESMAJENE');
             appPin = 'DINKESMAJENE';
         }
+        // Jika ada proyek aktif, langsung arahkan ke tab Lapangan secara otomatis
         if (currentProjectId || projects.length > 0) {
             if(!currentProjectId) { currentProjectId = projects[0].id; activeProject = projects[0]; }
             switchTab('input');
@@ -390,6 +363,7 @@
         } 
     }
 
+    
     function updateSelectActiveProjectInput() {
         let sel = document.getElementById('selectActiveProjectInput');
         if(!sel) return;
@@ -546,6 +520,7 @@
         if(optionsDiv && optionsDiv.classList.contains('q-options')) { optionsDiv.style.display = ['radio', 'checkbox', 'dropdown'].includes(selectElem.value) ? 'block' : 'none'; }
     }
 
+    // FUNGSI AUTO-BUILDER VIA EXCEL (CSV)
     function klikImportDesainExcel() {
         alert("ATURAN EXCEL (Simpan sebagai .CSV):\n\nKolom A: Variabel (Cth: umur)\nKolom B: Pertanyaan (Cth: Berapa umur Anda?)\nKolom C: Tipe (text / number / radio / checkbox / dropdown / gps)\nKolom D: Wajib? (Tulis 'Ya' atau kosongkan)\nKolom E: Opsi Jawaban (Pisahkan dengan TANDA PIPA '|', cth: Pria | Wanita)");
         document.getElementById('fileImportDesainExcel').click();
@@ -556,7 +531,7 @@
         let reader = new FileReader();
         reader.onload = function(e) {
             let content = e.target.result;
-            let separator = content.indexOf(';') > -1 ? ';' : ',';
+            let separator = content.indexOf(';') > -1 ? ';' : ','; // Deteksi otomatis separator PC
             let lines = content.split(/\r\n|\n/);
             let rawRows = [];
             
@@ -593,6 +568,7 @@
                 });
             });
 
+            // Map rawInduk (e.g. 'C3' or 'Q3') to actual question ID (e.g. 'Q3')
             tempSchema.forEach(q => {
                 if(q.logic.rawInduk) {
                     let rawParents = q.logic.rawInduk.split('&&').map(s=>s.trim());
@@ -678,16 +654,108 @@
         }
     }
 
+    
+    
     const majeneWilayah = {
-        "BANGGAE": ["Banggae", "Baru", "Galung", "Palipi Soreang", "Pamboborang", "Pangali Ali", "Rangas", "Totoli"],
-        "BANGGAE TIMUR": ["Baruga", "Baruga Dhua", "Baurung", "Buttu Baruga", "Labuang", "Labuang Utara", "Lembang", "Tande", "Tande Timur"],
-        "MALUNDA": ["Bambangan", "Kayuangin", "Lamungang Batu", "Lombang", "Lombang Timur", "Lombong", "Lombong Timur", "Maliaya", "Malunda", "Mekkatta", "Mekkatta Selatan", "Salutahongan"],
-        "PAMBOANG": ["Adolang", "Adolang Dhua", "Bababulo", "Bababulo Utara", "Balombong", "Banua Adolang", "Betteng", "Bonde", "Bonde Utara", "Buttu Pamboang", "Lalampanua", "Pesuloang", "Simbang", "Sirindu", "Tinambung"],
-        "SENDANA": ["Banua Sendana", "Binanga", "Bukit Samang", "Lalatedzong", "Leppangang", "Limboro Rambu-Rambu", "Limbua", "Mosso", "Mosso Dhua", "Paminggalan", "Pundau", "Puttada", "Sendana", "Tallubanua", "Tallubanua Utara", "Totolisi Sendana"],
-        "TAMMERODO SENDANA": ["Awo", "Manyamba", "Seppong", "Tallambalao", "Tammerodo", "Tammerodo Utara", "Ulidang"],
-        "TUBO SENDANA": ["Bonde Bonde", "Onang", "Onang Utara", "Tubo", "Tubo Poang", "Tubo Selatan", "Tubo Tengah"],
-        "ULUMANDA": ["Kabiraan", "Panggalo", "Popenga", "Salutambung", "Sambabo", "Sulai", "Tandeallo", "Ulumanda"]
-    };
+        "BANGGAE": [
+                "Banggae",
+                "Baru",
+                "Galung",
+                "Palipi Soreang",
+                "Pamboborang",
+                "Pangali Ali",
+                "Rangas",
+                "Totoli"
+        ],
+        "BANGGAE TIMUR": [
+                "Baruga",
+                "Baruga Dhua",
+                "Baurung",
+                "Buttu Baruga",
+                "Labuang",
+                "Labuang Utara",
+                "Lembang",
+                "Tande",
+                "Tande Timur"
+        ],
+        "MALUNDA": [
+                "Bambangan",
+                "Kayuangin",
+                "Lamungang Batu",
+                "Lombang",
+                "Lombang Timur",
+                "Lombong",
+                "Lombong Timur",
+                "Maliaya",
+                "Malunda",
+                "Mekkatta",
+                "Mekkatta Selatan",
+                "Salutahongan"
+        ],
+        "PAMBOANG": [
+                "Adolang",
+                "Adolang Dhua",
+                "Bababulo",
+                "Bababulo Utara",
+                "Balombong",
+                "Banua Adolang",
+                "Betteng",
+                "Bonde",
+                "Bonde Utara",
+                "Buttu Pamboang",
+                "Lalampanua",
+                "Pesuloang",
+                "Simbang",
+                "Sirindu",
+                "Tinambung"
+        ],
+        "SENDANA": [
+                "Banua Sendana",
+                "Binanga",
+                "Bukit Samang",
+                "Lalatedzong",
+                "Leppangang",
+                "Limboro Rambu-Rambu",
+                "Limbua",
+                "Mosso",
+                "Mosso Dhua",
+                "Paminggalan",
+                "Pundau",
+                "Puttada",
+                "Sendana",
+                "Tallubanua",
+                "Tallubanua Utara",
+                "Totolisi Sendana"
+        ],
+        "TAMMERODO SENDANA": [
+                "Awo",
+                "Manyamba",
+                "Seppong",
+                "Tallambalao",
+                "Tammerodo",
+                "Tammerodo Utara",
+                "Ulidang"
+        ],
+        "TUBO SENDANA": [
+                "Bonde Bonde",
+                "Onang",
+                "Onang Utara",
+                "Tubo",
+                "Tubo Poang",
+                "Tubo Selatan",
+                "Tubo Tengah"
+        ],
+        "ULUMANDA": [
+                "Kabiraan",
+                "Panggalo",
+                "Popenga",
+                "Salutambung",
+                "Sambabo",
+                "Sulai",
+                "Tandeallo",
+                "Ulumanda"
+        ]
+};
 
     function updateCascadingDropdowns() {
         const form = document.getElementById('dataForm');
@@ -710,9 +778,11 @@
                     let kecSelect = form.querySelector(`select[name="${kecQuestion.id}"]`);
                     if(kecSelect) {
                         let rawKec = kecSelect.value.trim().toUpperCase();
+                        // Remove potential numeric prefixes like "1=" or "1. "
                         let cleanKec = rawKec.replace(/^[0-9]+[\.\=\-\s]+/, "").trim();
                         
                         let matchedKey = "";
+                        // Sort keys by length descending to match longer keys first (e.g. "BANGGAE TIMUR" before "BANGGAE")
                         let sortedKeys = Object.keys(majeneWilayah).sort((a, b) => b.length - a.length);
                         
                         for(let key of sortedKeys) {
@@ -738,6 +808,7 @@
             }
         });
     }
+
 
     function evaluasiLogikaLompat() {
         updateCascadingDropdowns();
@@ -846,6 +917,8 @@
             unduhDataAdmin(id);
         }
     }
+
 </script>
+
 </body>
 </html>
