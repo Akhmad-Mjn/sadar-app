@@ -63,6 +63,7 @@
         
         input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); box-sizing: border-box; font-family: inherit; font-size: 16px; background-color: #f9fafb; transition: all 0.2s ease; accent-color: var(--primary); }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); background-color: var(--card-bg); box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1); }
+        input:invalid:focus { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
 
         button { border: none; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; font-size: 14px; }
         button:active { transform: scale(0.97); }
@@ -242,7 +243,6 @@
                 <div style="display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%;">
                     <span class="subtitle" id="statusBar" style="margin:0; font-size: 13px;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
                     
-                    <!-- Tambahan Tombol Load untuk Enumerator -->
                     <button type="button" class="btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="klikImport()">📥 Load File</button>
                     
                     <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="bukaDaftarResponden()" title="Butuh PIN Admin">🔒 Koreksi</button>
@@ -295,16 +295,9 @@
     
     function updateManifestTheme() {
         const manifest = { 
-            "name": "SADAR Pro", 
-            "short_name": "SADAR", 
-            "start_url": "./", 
-            "display": "standalone", 
-            "background_color": "#f3f4f6", 
-            "theme_color": "#ffffff", // Kunci warna putih untuk bilah navigasi bawah HP
-            "icons": [
-                { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-                { "src": "icon.svg", "sizes": "512x512", "type": "image/svg+xml" }
-            ] 
+            "name": "SADAR Pro", "short_name": "SADAR", "start_url": "./", "display": "standalone", 
+            "background_color": "#f3f4f6", "theme_color": "#ffffff", 
+            "icons": [ { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }, { "src": "icon.svg", "sizes": "512x512", "type": "image/svg+xml" } ] 
         };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
         const manifestElem = document.getElementById('dynamicManifest');
@@ -320,7 +313,6 @@
         
         let metaTag = document.getElementById('metaThemeColor');
         if(metaTag) metaTag.setAttribute('content', t.primary);
-        
         updateManifestTheme();
     }
 
@@ -347,25 +339,18 @@
     const installBanner = document.getElementById('pwaInstallBanner');
     const btnInstall = document.getElementById('btnInstallPWA');
 
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-        installBanner.style.display = 'none';
-    } else {
-        installBanner.style.display = 'flex';
-    }
+    if (window.matchMedia('(display-mode: standalone)').matches) { installBanner.style.display = 'none'; } 
+    else { installBanner.style.display = 'flex'; }
 
     window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBanner.style.display = 'flex';
+        e.preventDefault(); deferredPrompt = e; installBanner.style.display = 'flex';
     });
 
     btnInstall.addEventListener('click', async () => {
         if (deferredPrompt) {
             deferredPrompt.prompt();
             let { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                installBanner.style.display = 'none';
-            }
+            if (outcome === 'accepted') { installBanner.style.display = 'none'; }
             deferredPrompt = null;
         } else {
             alert("📌 CARA MEMASANG SADAR PRO:\n\n1. Tekan tombol titik tiga (⋮) di kanan atas Google Chrome.\n2. Pilih 'Tambahkan ke Layar Utama' (Add to Home Screen).\n\nAplikasi akan terpasang otomatis di HP Anda dengan ikon resmi SADAR Pro!");
@@ -383,16 +368,11 @@
     if(!deviceCode) { deviceCode = Math.random().toString(36).substring(2, 6).toUpperCase(); localStorage.setItem('sadarDevCode', deviceCode); }
 
     window.onload = function() {
-        if (!appPin) {
-            localStorage.setItem('sadarPin4', 'DINKESMAJENE');
-            appPin = 'DINKESMAJENE';
-        }
+        if (!appPin) { localStorage.setItem('sadarPin4', 'DINKESMAJENE'); appPin = 'DINKESMAJENE'; }
         if (currentProjectId || projects.length > 0) {
             if(!currentProjectId) { currentProjectId = projects[0].id; activeProject = projects[0]; }
             switchTab('input');
-        } else {
-            renderDashboard();
-        }
+        } else { renderDashboard(); }
     }
 
     function simpanKeLocalStorage() { localStorage.setItem('sadarProjectsV4', JSON.stringify(projects)); }
@@ -404,64 +384,40 @@
         if (inputOld === appPin || inputOld === "DINKESMAJENE") {
             let newPin = prompt("🔑 DIVERIFIKASI.\n\nMasukkan PIN Admin baru yang Anda inginkan:");
             if (newPin && newPin.trim() !== "") {
-                localStorage.setItem('sadarPin4', newPin.trim());
-                appPin = newPin.trim();
-                isAdminUnlocked = true;
+                localStorage.setItem('sadarPin4', newPin.trim()); appPin = newPin.trim(); isAdminUnlocked = true;
                 alert("✅ PIN Admin berhasil diperbarui menjadi: " + appPin);
-            } else {
-                alert("Pembaruan PIN dibatalkan. PIN tidak boleh kosong.");
-            }
-        } else {
-            alert("❌ PIN atau Master Key yang Anda masukkan salah.");
-        }
+            } else { alert("Pembaruan PIN dibatalkan. PIN tidak boleh kosong."); }
+        } else { alert("❌ PIN atau Master Key yang Anda masukkan salah."); }
     }
 
     function mintaAksesAdmin() { 
         if (isAdminUnlocked) return true; 
         let inputPin = prompt("🔒 Masukkan PIN Admin:\n\n*Tips: Jika lupa, masukkan Master Key"); 
-        if (inputPin === appPin) { 
-            isAdminUnlocked = true; 
-            renderDashboard(); 
-            return true; 
-        } else if (inputPin === "DINKESMAJENE") { 
+        if (inputPin === appPin) { isAdminUnlocked = true; renderDashboard(); return true; } 
+        else if (inputPin === "DINKESMAJENE") { 
             let newPin = prompt("🔑 MASTER KEY DITERIMA.\n\nSilakan buat PIN Admin baru (Angka):"); 
             if (newPin && newPin.trim() !== "") { 
-                localStorage.setItem('sadarPin4', newPin.trim()); 
-                appPin = newPin.trim(); 
-                isAdminUnlocked = true; 
-                renderDashboard(); 
-                alert("✅ PIN berhasil direset tanpa menghapus data proyek!"); 
-                return true; 
-            } else { 
-                alert("Pembuatan PIN dibatalkan."); 
-                return false; 
-            } 
-        } else { 
-            if(inputPin !== null) alert("PIN Salah!"); 
-            return false; 
-        } 
+                localStorage.setItem('sadarPin4', newPin.trim()); appPin = newPin.trim(); isAdminUnlocked = true; 
+                renderDashboard(); alert("✅ PIN berhasil direset tanpa menghapus data proyek!"); return true; 
+            } else { alert("Pembuatan PIN dibatalkan."); return false; } 
+        } else { if(inputPin !== null) alert("PIN Salah!"); return false; } 
     }
 
     function updateSelectActiveProjectInput() {
         let sel = document.getElementById('selectActiveProjectInput');
-        if(!sel) return;
-        sel.innerHTML = '';
+        if(!sel) return; sel.innerHTML = '';
         if(projects.length === 0) return;
         projects.forEach(p => {
-            let opt = document.createElement('option');
-            opt.value = p.id;
-            opt.innerText = p.title;
+            let opt = document.createElement('option'); opt.value = p.id; opt.innerText = p.title;
             if(p.id === currentProjectId) opt.selected = true;
             sel.appendChild(opt);
         });
     }
 
     function gantiProyekCepat(id) {
-        currentProjectId = id;
-        activeProject = projects.find(p => p.id === id);
+        currentProjectId = id; activeProject = projects.find(p => p.id === id);
         document.getElementById('displayTitle').innerText = activeProject.title;
-        renderForm();
-        evaluasiLogikaLompat();
+        renderForm(); evaluasiLogikaLompat();
     }
 
     function switchTab(tabId) {
@@ -552,22 +508,10 @@
         let pName = projects.find(p => p.id === id).title;
         if(confirm(`Yakin ingin menghapus permanen proyek "${pName}" beserta semua datanya?`)) { 
             projects = projects.filter(p => p.id !== id); 
-            if(currentProjectId === id) { 
-                currentProjectId = projects.length > 0 ? projects[0].id : null; 
-                activeProject = projects.length > 0 ? projects[0] : null; 
-            } 
-            simpanKeLocalStorage(); 
-            renderDashboard(); 
-            updateSelectActiveProjectInput();
-            if (currentProjectId) {
-                renderForm();
-                evaluasiLogikaLompat();
-            } else {
-                document.getElementById('emptyInputState').style.display = 'block';
-                document.getElementById('activeInputState').style.display = 'none';
-                document.getElementById('dataForm').style.display = 'none';
-                document.getElementById('displayTitle').innerText = "Sistem Siaga (Standby)";
-            }
+            if(currentProjectId === id) { currentProjectId = projects.length > 0 ? projects[0].id : null; activeProject = projects.length > 0 ? projects[0] : null; } 
+            simpanKeLocalStorage(); renderDashboard(); updateSelectActiveProjectInput();
+            if (currentProjectId) { renderForm(); evaluasiLogikaLompat(); } 
+            else { document.getElementById('emptyInputState').style.display = 'block'; document.getElementById('activeInputState').style.display = 'none'; document.getElementById('dataForm').style.display = 'none'; document.getElementById('displayTitle').innerText = "Sistem Siaga (Standby)"; }
         }
     }
 
@@ -580,7 +524,11 @@
         if(activeProject.schema.length > 0) {
             activeProject.schema.forEach(q => {
                 addQuestionUI(); const cards = document.querySelectorAll('#questionsContainer .build-card'); const lastCard = cards[cards.length - 1];
-                lastCard.querySelector('.q-var').value = q.varName; lastCard.querySelector('.q-text').value = q.text; lastCard.querySelector('.q-type').value = q.type; lastCard.querySelector('.q-req-box').checked = q.required; toggleOptions(lastCard.querySelector('.q-type'));
+                lastCard.querySelector('.q-var').value = q.varName; lastCard.querySelector('.q-text').value = q.text; lastCard.querySelector('.q-type').value = q.type; lastCard.querySelector('.q-req-box').checked = q.required; 
+                toggleOptions(lastCard.querySelector('.q-type'));
+                
+                if(q.exactLength) lastCard.querySelector('.q-exact-len').value = q.exactLength;
+                
                 if(q.options.length > 0) lastCard.querySelector('.q-opt-val').value = q.options.join(' | ');
                 if(q.logic && q.logic.parentId) { lastCard.querySelector('.logic-parent').value = q.logic.parentId; lastCard.querySelector('.logic-val').value = q.logic.requiredValue; }
             });
@@ -589,13 +537,18 @@
 
     function addQuestionUI() {
         const div = document.createElement('div'); div.className = 'build-card';
-        div.innerHTML = `<div class="build-header"><span class="q-id-badge">KODE: Q?</span><label class="req-toggle"><input type="checkbox" class="q-req-box"> Wajib Diisi</label></div><div class="grid-builder"><div class="input-group" style="margin:0;"><label>Variabel (Header Excel)</label><input type="text" class="q-var" placeholder="Misal: usia" oninput="this.value = this.value.replace(/\\s+/g, '_').toLowerCase()"></div><div class="input-group" style="margin:0;"><label>Teks Pertanyaan Kuesioner</label><input type="text" class="q-text" placeholder="Tuliskan pertanyaan secara lengkap..."></div></div><div class="input-group" style="margin-top: 15px;"><label>Format Jawaban</label><select class="q-type" onchange="toggleOptions(this)"><option value="text">Teks Pendek</option><option value="textarea">Teks Paragraf</option><option value="number">Angka (Numerik)</option><option value="radio">Pilihan Ganda (Pilih 1)</option><option value="checkbox">Kotak Centang (Pilih >1)</option><option value="dropdown">Dropdown List</option><option value="date">Tanggal</option><option value="gps">📍 Sensor Koordinat GPS</option></select></div><div class="input-group q-options" style="display:none; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px dashed #fcd34d;"><label>Opsi Jawaban (Gunakan tanda PIPA '|' sebagai pemisah)</label><input type="text" class="q-opt-val" placeholder="1=Ya, Rutin | 2=Ya, Tidak Rutin | 3=Tidak" style="background: white;"></div><div class="logic-panel"><div style="flex: 1;"><label style="font-size: 13px; font-weight:bold; color: var(--text-main); display:block; margin-bottom:4px;">⚡ Tampilkan Pertanyaan Ini HANYA JIKA:</label><div style="font-size: 11px; color: var(--text-muted);">Gunakan <b>&&</b> (Cth Induk: <b>Q14 && A.4</b> | Target: <b>4 && Ya</b>)</div></div><div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 2;"><input type="text" class="logic-parent" placeholder="Kode Induk" style="flex: 1; background:white; min-width: 90px;"><input type="text" class="logic-val" placeholder="Jawaban Target" style="flex: 1.5; background:white; min-width: 110px;"></div></div><div style="text-align: right; margin-top: 15px;"><button class="btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="this.parentElement.parentElement.remove(); updateLabels();">Hapus Blok Pertanyaan</button></div>`;
+        div.innerHTML = `<div class="build-header"><span class="q-id-badge">KODE: Q?</span><label class="req-toggle"><input type="checkbox" class="q-req-box"> Wajib Diisi</label></div><div class="grid-builder"><div class="input-group" style="margin:0;"><label>Variabel (Header Excel)</label><input type="text" class="q-var" placeholder="Misal: usia" oninput="this.value = this.value.replace(/\\s+/g, '_').toLowerCase()"></div><div class="input-group" style="margin:0;"><label>Teks Pertanyaan Kuesioner</label><input type="text" class="q-text" placeholder="Tuliskan pertanyaan secara lengkap..."></div></div><div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;"><div class="input-group" style="flex: 1; margin: 0; min-width: 200px;"><label>Format Jawaban</label><select class="q-type" onchange="toggleOptions(this)"><option value="text">Teks Pendek (Gunakan utk NIK/KK)</option><option value="textarea">Teks Paragraf</option><option value="number">Angka (Matematika/Umur)</option><option value="radio">Pilihan Ganda (Pilih 1)</option><option value="checkbox">Kotak Centang (Pilih >1)</option><option value="dropdown">Dropdown List</option><option value="date">Tanggal</option><option value="gps">📍 Sensor Koordinat GPS</option></select></div><div class="input-group q-val-box" style="flex: 1; margin: 0; min-width: 200px;"><label>Validasi Digit/Karakter Pasti (Opsional)</label><input type="number" class="q-exact-len" placeholder="Cth: 16 (Wajib 16 digit)"></div></div><div class="input-group q-options" style="display:none; background: #fffbeb; padding: 15px; border-radius: 8px; border: 1px dashed #fcd34d; margin-top: 15px;"><label>Opsi Jawaban (Gunakan tanda PIPA '|' sebagai pemisah)</label><input type="text" class="q-opt-val" placeholder="1=Ya, Rutin | 2=Ya, Tidak Rutin | 3=Tidak" style="background: white;"></div><div class="logic-panel"><div style="flex: 1;"><label style="font-size: 13px; font-weight:bold; color: var(--text-main); display:block; margin-bottom:4px;">⚡ Tampilkan Pertanyaan Ini HANYA JIKA:</label><div style="font-size: 11px; color: var(--text-muted);">Gunakan <b>&&</b> (Cth Induk: <b>Q14 && A.4</b> | Target: <b>4 && Ya</b>)</div></div><div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 2;"><input type="text" class="logic-parent" placeholder="Kode Induk" style="flex: 1; background:white; min-width: 90px;"><input type="text" class="logic-val" placeholder="Jawaban Target" style="flex: 1.5; background:white; min-width: 110px;"></div></div><div style="text-align: right; margin-top: 15px;"><button class="btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="this.parentElement.parentElement.remove(); updateLabels();">Hapus Blok Pertanyaan</button></div>`;
         document.getElementById('questionsContainer').appendChild(div); updateLabels();
     }
 
     function toggleOptions(selectElem) {
-        const optionsDiv = selectElem.parentElement.nextElementSibling;
-        if(optionsDiv && optionsDiv.classList.contains('q-options')) { optionsDiv.style.display = ['radio', 'checkbox', 'dropdown'].includes(selectElem.value) ? 'block' : 'none'; }
+        const card = selectElem.closest('.build-card');
+        if(!card) return;
+        const optionsDiv = card.querySelector('.q-options');
+        const valBox = card.querySelector('.q-val-box');
+        const type = selectElem.value;
+        if(optionsDiv) optionsDiv.style.display = ['radio', 'checkbox', 'dropdown'].includes(type) ? 'block' : 'none';
+        if(valBox) valBox.style.display = ['text', 'number'].includes(type) ? 'block' : 'none';
     }
 
     function klikImportDesainExcel() {
@@ -634,15 +587,7 @@
                 let qID = "Q" + (idx + 1);
                 let qVar = r.varName !== "" ? r.varName : qID;
                 let qOpts = r.optsStr !== "" ? r.optsStr.split('|').map(o=>o.trim()).filter(o=>o!=="") : [];
-                tempSchema.push({
-                    id: qID,
-                    varName: qVar,
-                    text: r.text,
-                    type: r.type,
-                    required: r.req,
-                    options: qOpts,
-                    logic: { parentId: '', requiredValue: r.targetVal, rawInduk: r.indukLogic }
-                });
+                tempSchema.push({ id: qID, varName: qVar, text: r.text, type: r.type, required: r.req, options: qOpts, logic: { parentId: '', requiredValue: r.targetVal, rawInduk: r.indukLogic } });
             });
 
             tempSchema.forEach(q => {
@@ -651,8 +596,7 @@
                     let mappedParents = [];
                     rawParents.forEach(rp => {
                         let parentQ = tempSchema.find(p => p.varName.toUpperCase() === rp || p.id.toUpperCase() === rp);
-                        if(parentQ) mappedParents.push(parentQ.id);
-                        else mappedParents.push(rp);
+                        if(parentQ) mappedParents.push(parentQ.id); else mappedParents.push(rp);
                     });
                     q.logic.parentId = mappedParents.join('&&');
                 }
@@ -673,10 +617,12 @@
         let autoNum = document.getElementById('cfgAutoNumber').checked; let isValid = true;
         document.querySelectorAll('#questionsContainer .build-card').forEach((card, index) => {
             let qID = "Q" + (index + 1); let qVar = card.querySelector('.q-var').value.trim() || qID; let qText = card.querySelector('.q-text').value; let qType = card.querySelector('.q-type').value; let qReq = card.querySelector('.q-req-box').checked; let qOpts = card.querySelector('.q-opt-val').value; let lParent = card.querySelector('.logic-parent').value.trim().toUpperCase(); let lVal = card.querySelector('.logic-val').value.trim();
+            let exactLen = card.querySelector('.q-exact-len').value.trim();
+            
             if(qText.trim() === "") isValid = false;
             let optionsArray = [];
             if (['radio', 'checkbox', 'dropdown'].includes(qType)) { let delimiter = qOpts.includes('|') ? '|' : ','; optionsArray = qOpts.split(delimiter).map(o => o.trim()).filter(o => o !== ""); if (optionsArray.length === 0) isValid = false; }
-            tempSchema.push({ id: qID, varName: qVar, text: qText, type: qType, required: qReq, options: optionsArray, logic: { parentId: lParent, requiredValue: lVal } });
+            tempSchema.push({ id: qID, varName: qVar, text: qText, type: qType, required: qReq, options: optionsArray, exactLength: exactLen, logic: { parentId: lParent, requiredValue: lVal } });
         });
         if (tempSchema.length === 0) return alert("Belum ada instrumen pertanyaan."); if (!isValid) return alert("Pastikan teks pertanyaan & opsi tidak kosong.");
         if(activeProject.data.length > 0 && JSON.stringify(tempSchema.map(q=>q.id)) !== JSON.stringify(activeProject.schema.map(q=>q.id))) { if(!confirm("⚠️ PERINGATAN\nData lama tidak kompatibel dan akan dihapus. Lanjutkan?")) return; activeProject.data = []; }
@@ -690,10 +636,21 @@
         activeProject.schema.forEach((q, index) => {
             let reqMark = q.required ? '<span class="req-star">*</span>' : ''; let reqAttr = q.required ? 'required' : '';
             let nomorPrefix = isAutoNumber ? (index + 1) + '. ' : '';
+            
+            let valAttr = q.exactLength ? ` minlength="${q.exactLength}" maxlength="${q.exactLength}" pattern=".{${q.exactLength},${q.exactLength}}" title="Validasi: Harus diisi tepat ${q.exactLength} karakter/angka"` : '';
+            
             let html = `<div class="q-card" id="card-${q.id}" data-parent="${q.logic.parentId}" data-reqval="${q.logic.requiredValue}"><div class="q-title">${nomorPrefix}${q.text} ${reqMark}</div>`;
-            if (q.type === 'text') { html += `<input type="text" name="${q.id}" ${reqAttr} placeholder="Ketik jawaban Anda...">`; } 
+            
+            if (q.type === 'text') { 
+                let numHint = q.exactLength == 16 ? 'inputmode="numeric"' : ''; 
+                html += `<input type="text" name="${q.id}" ${reqAttr} ${valAttr} ${numHint} placeholder="Ketik jawaban Anda...">`; 
+                if(q.exactLength == 16) html += `<small style="color: var(--danger); font-size: 11px; display: block; margin-top: 5px;">*Wajib tepat 16 digit angka.</small>`;
+            } 
             else if (q.type === 'textarea') { html += `<textarea name="${q.id}" rows="3" ${reqAttr} placeholder="Jelaskan secara detail..."></textarea>`; }
-            else if (q.type === 'number') { html += `<input type="number" name="${q.id}" ${reqAttr} placeholder="0">`; } 
+            else if (q.type === 'number') { 
+                let onInputNum = q.exactLength ? `oninput="if(this.value.length > ${q.exactLength}) this.value = this.value.slice(0, ${q.exactLength});"` : '';
+                html += `<input type="number" name="${q.id}" ${reqAttr} ${valAttr} ${onInputNum} placeholder="0">`; 
+            } 
             else if (q.type === 'date') { html += `<input type="date" name="${q.id}" ${reqAttr}>`; }
             else if (q.type === 'dropdown') { 
                 html += `<select name="${q.id}" ${reqAttr}><option value="" disabled selected hidden>-- Silakan Pilih Opsi --</option>`; 
@@ -714,19 +671,13 @@
 
     function checkCondition(actualValue, targetValue) {
         if (actualValue === undefined || actualValue === null || actualValue === "") return false;
-        actualValue = String(actualValue).trim();
-        targetValue = String(targetValue).trim();
-        if (targetValue.startsWith(">=")) {
-            return parseFloat(actualValue) >= parseFloat(targetValue.replace(">=", "").trim());
-        } else if (targetValue.startsWith("<=")) {
-            return parseFloat(actualValue) <= parseFloat(targetValue.replace("<=", "").trim());
-        } else if (targetValue.startsWith(">")) {
-            return parseFloat(actualValue) > parseFloat(targetValue.replace(">", "").trim());
-        } else if (targetValue.startsWith("<")) {
-            return parseFloat(actualValue) < parseFloat(targetValue.replace("<", "").trim());
-        } else {
-            let lowerActual = actualValue.toLowerCase();
-            let lowerTarget = targetValue.toLowerCase();
+        actualValue = String(actualValue).trim(); targetValue = String(targetValue).trim();
+        if (targetValue.startsWith(">=")) { return parseFloat(actualValue) >= parseFloat(targetValue.replace(">=", "").trim()); } 
+        else if (targetValue.startsWith("<=")) { return parseFloat(actualValue) <= parseFloat(targetValue.replace("<=", "").trim()); } 
+        else if (targetValue.startsWith(">")) { return parseFloat(actualValue) > parseFloat(targetValue.replace(">", "").trim()); } 
+        else if (targetValue.startsWith("<")) { return parseFloat(actualValue) < parseFloat(targetValue.replace("<", "").trim()); } 
+        else {
+            let lowerActual = actualValue.toLowerCase(); let lowerTarget = targetValue.toLowerCase();
             if (lowerActual === lowerTarget) return true;
             if (lowerActual.startsWith(lowerTarget + "=") || lowerActual.startsWith(lowerTarget + " ") || lowerActual.startsWith(lowerTarget + "-")) return true;
             if (isNaN(targetValue) && lowerActual.includes(lowerTarget)) return true;
@@ -748,47 +699,20 @@
     function updateCascadingDropdowns() {
         const form = document.getElementById('dataForm');
         if(!form) return;
-        
         const selects = form.querySelectorAll('select');
         selects.forEach(sel => {
-            let qId = sel.name;
-            let qSchema = activeProject.schema.find(q => q.id === qId);
-            if(!qSchema) return;
-            
+            let qId = sel.name; let qSchema = activeProject.schema.find(q => q.id === qId); if(!qSchema) return;
             let varName = (qSchema.varName || "").toLowerCase();
             if(varName.includes('desa') || varName.includes('kelurahan') || varName.includes('desakel')) {
-                let kecQuestion = activeProject.schema.find(q => {
-                    let v = (q.varName || "").toLowerCase();
-                    return v.includes('kecamatan') || v.includes('kec');
-                });
-                
+                let kecQuestion = activeProject.schema.find(q => { let v = (q.varName || "").toLowerCase(); return v.includes('kecamatan') || v.includes('kec'); });
                 if(kecQuestion) {
                     let kecSelect = form.querySelector(`select[name="${kecQuestion.id}"]`);
                     if(kecSelect) {
-                        let rawKec = kecSelect.value.trim().toUpperCase();
-                        let cleanKec = rawKec.replace(/^[0-9]+[\.\=\-\s]+/, "").trim();
-                        
-                        let matchedKey = "";
-                        let sortedKeys = Object.keys(majeneWilayah).sort((a, b) => b.length - a.length);
-                        
-                        for(let key of sortedKeys) {
-                            if(cleanKec === key || cleanKec.includes(key)) {
-                                matchedKey = key;
-                                break;
-                            }
-                        }
-                        
-                        let currentVal = sel.value;
-                        sel.innerHTML = '<option value="" disabled selected hidden>-- Pilih Desa / Kelurahan --</option>';
-                        if(matchedKey && majeneWilayah[matchedKey]) {
-                            majeneWilayah[matchedKey].forEach(desa => {
-                                let opt = document.createElement('option');
-                                opt.value = desa;
-                                opt.innerText = desa;
-                                if(desa === currentVal) opt.selected = true;
-                                sel.appendChild(opt);
-                            });
-                        }
+                        let rawKec = kecSelect.value.trim().toUpperCase(); let cleanKec = rawKec.replace(/^[0-9]+[\.\=\-\s]+/, "").trim();
+                        let matchedKey = ""; let sortedKeys = Object.keys(majeneWilayah).sort((a, b) => b.length - a.length);
+                        for(let key of sortedKeys) { if(cleanKec === key || cleanKec.includes(key)) { matchedKey = key; break; } }
+                        let currentVal = sel.value; sel.innerHTML = '<option value="" disabled selected hidden>-- Pilih Desa / Kelurahan --</option>';
+                        if(matchedKey && majeneWilayah[matchedKey]) { majeneWilayah[matchedKey].forEach(desa => { let opt = document.createElement('option'); opt.value = desa; opt.innerText = desa; if(desa === currentVal) opt.selected = true; sel.appendChild(opt); }); }
                     }
                 }
             }
@@ -801,25 +725,15 @@
         document.querySelectorAll('.q-card').forEach(card => {
             if(card.id === 'core-id') return; let parentId = card.getAttribute('data-parent'); let reqValue = card.getAttribute('data-reqval');
             if (parentId && reqValue) {
-                let parents = parentId.split('&&').map(s=>s.trim());
-                let reqs = reqValue.split('&&').map(s=>s.trim());
-                let isMatch = true;
-                for(let i=0; i<parents.length; i++) {
-                    let actualValue = formData.getAll(parents[i]).join("; ");
-                    if(!checkCondition(actualValue, reqs[i] || "")) { isMatch = false; break; }
-                }
+                let parents = parentId.split('&&').map(s=>s.trim()); let reqs = reqValue.split('&&').map(s=>s.trim()); let isMatch = true;
+                for(let i=0; i<parents.length; i++) { let actualValue = formData.getAll(parents[i]).join("; "); if(!checkCondition(actualValue, reqs[i] || "")) { isMatch = false; break; } }
                 if (isMatch) { 
                     card.style.display = 'block'; 
                     let qData = activeProject.schema.find(q => q.id === card.id.replace('card-','')); 
-                    if(qData && qData.required) { 
-                        card.querySelectorAll('input, select, textarea').forEach(inp => { if(inp.type !== 'checkbox') inp.required = true; }); 
-                    } 
+                    if(qData && qData.required) { card.querySelectorAll('input, select, textarea').forEach(inp => { if(inp.type !== 'checkbox') inp.required = true; }); } 
                 } else { 
                     card.style.display = 'none'; 
-                    card.querySelectorAll('input, select, textarea').forEach(inp => { 
-                        inp.required = false; 
-                        if(inp.type === 'radio' || inp.type === 'checkbox') inp.checked = false; else inp.value = ""; 
-                    }); 
+                    card.querySelectorAll('input, select, textarea').forEach(inp => { inp.required = false; if(inp.type === 'radio' || inp.type === 'checkbox') inp.checked = false; else inp.value = ""; }); 
                 }
             }
         });
@@ -884,23 +798,11 @@
             csv += rowArray.join(",") + "\n";
         });
         
-        const fileName = `Data_SADAR_${proj.title.replace(/\s+/g, '_')}.csv`;
-        const file = new File([csv], fileName, { type: 'text/csv' });
-        
+        const fileName = `Data_SADAR_${proj.title.replace(/\s+/g, '_')}.csv`; const file = new File([csv], fileName, { type: 'text/csv' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-                await navigator.share({
-                    title: 'Data Survei SADAR',
-                    text: `Berikut adalah lampiran file data CSV dari survei: ${proj.title}.`,
-                    files: [file]
-                });
-            } catch (error) {
-                if (error.name !== 'AbortError') alert("Gagal membagikan file via sistem. Anda bisa menyimpannya secara manual.");
-            }
-        } else {
-            alert("Fitur Share langsung (Kirim ke WA/Drive) tidak didukung di browser ini atau sedang dalam mode offline/file lokal. File akan diunduh otomatis.");
-            unduhDataAdmin(id);
-        }
+            try { await navigator.share({ title: 'Data Survei SADAR', text: `Berikut adalah lampiran file data CSV dari survei: ${proj.title}.`, files: [file] }); } 
+            catch (error) { if (error.name !== 'AbortError') alert("Gagal membagikan file via sistem. Anda bisa menyimpannya secara manual."); }
+        } else { alert("Fitur Share langsung tidak didukung di browser ini. File akan diunduh otomatis."); unduhDataAdmin(id); }
     }
 </script>
 
