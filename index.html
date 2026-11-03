@@ -241,8 +241,12 @@
                 </div>
                 <div style="display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%;">
                     <span class="subtitle" id="statusBar" style="margin:0; font-size: 13px;">Data Terkumpul: <strong id="countData" style="color: var(--primary);">0</strong></span>
-                    <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="bukaDaftarResponden()" title="Butuh PIN Admin">🔒 Koreksi Data</button>
-                    <button type="button" class="btn-dark" style="padding: 6px 12px; font-size: 12px;" onclick="exportProyekAktif()">📤 Backup (.sadar)</button>
+                    
+                    <!-- Tambahan Tombol Load untuk Enumerator -->
+                    <button type="button" class="btn-success" style="padding: 6px 12px; font-size: 12px;" onclick="klikImport()">📥 Load File</button>
+                    
+                    <button type="button" class="btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="bukaDaftarResponden()" title="Butuh PIN Admin">🔒 Koreksi</button>
+                    <button type="button" class="btn-dark" style="padding: 6px 12px; font-size: 12px;" onclick="exportProyekAktif()">📤 Backup</button>
                 </div>
             </div>
         </div>
