@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="SADAR Pro">
     
-    <!-- Physical Icon References (Fixes Chrome WebAPK badge bug) -->
+    <!-- Physical Icon References -->
     <link rel="icon" type="image/svg+xml" href="icon.svg">
     <link rel="alternate icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
@@ -25,7 +25,17 @@
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1); --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
         }
 
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-main); line-height: 1.5; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; min-height: 100vh; }
+        html, body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            margin: 0; padding: 0; 
+            color: var(--text-main); 
+            line-height: 1.5; 
+            -webkit-tap-highlight-color: transparent; 
+            display: flex; flex-direction: column; 
+            min-height: 100vh; 
+        }
+
         .navbar { background-color: var(--card-bg); box-shadow: var(--shadow-sm); position: sticky; top: 0; z-index: 100; width: 100%; border-bottom: 1px solid var(--border); }
         .nav-container { width: 100%; max-width: 1100px; margin: auto; display: flex; flex-direction: column; align-items: center; padding: 12px 16px; box-sizing: border-box; gap: 15px; }
         .brand-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -285,7 +295,7 @@
             "short_name": "SADAR", 
             "start_url": "./", 
             "display": "standalone", 
-            "background_color": "#f3f4f6", 
+            "background_color": colorHex, 
             "theme_color": colorHex, 
             "icons": [
                 { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
@@ -293,7 +303,8 @@
             ] 
         };
         const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-        document.getElementById('dynamicManifest').href = URL.createObjectURL(blob);
+        const manifestElem = document.getElementById('dynamicManifest');
+        if(manifestElem) manifestElem.href = URL.createObjectURL(blob);
     }
 
     function applyTemaTersimpan() {
@@ -318,7 +329,6 @@
         alert(nextTheme === 'green' ? "✅ Tema diubah ke Hijau Medis (Dinkes)" : "✅ Tema diubah ke Biru Korporat (Default)");
     }
     
-    // Langsung terapkan tema dari awal eksekusi
     applyTemaTersimpan();
 
     if ('serviceWorker' in navigator) {
