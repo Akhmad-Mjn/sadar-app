@@ -289,14 +289,14 @@
 <script>
     const THEMES = { blue: { primary: '#4338ca', hover: '#3730a3', secondary: '#0ea5e9' }, green: { primary: '#059669', hover: '#047857', secondary: '#10b981' } };
     
-    function updateManifestTheme(colorHex) {
+    function updateManifestTheme() {
         const manifest = { 
             "name": "SADAR Pro", 
             "short_name": "SADAR", 
             "start_url": "./", 
             "display": "standalone", 
-            "background_color": colorHex, 
-            "theme_color": colorHex, 
+            "background_color": "#f3f4f6", 
+            "theme_color": "#ffffff", // Kunci warna putih untuk bilah navigasi bawah HP
             "icons": [
                 { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
                 { "src": "icon.svg", "sizes": "512x512", "type": "image/svg+xml" }
@@ -317,7 +317,7 @@
         let metaTag = document.getElementById('metaThemeColor');
         if(metaTag) metaTag.setAttribute('content', t.primary);
         
-        updateManifestTheme(t.primary);
+        updateManifestTheme();
     }
 
     function gantiTemaWarna() {
